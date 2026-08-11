@@ -79,353 +79,91 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
   text-shadow:2px 2px #2b176c;
 }
 #skipLevelBtn:active{transform:translateY(4px);box-shadow:0 0 0 #2b176c}
-
-
-#winnerScreen{
-  position:fixed;inset:0;z-index:99999;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(5,7,18,.82);
-  backdrop-filter:blur(5px);
-}
-#winnerScreen.show{display:flex}
-.winner-card{
-  width:min(92vw,520px);
-  padding:28px 26px 24px;
-  text-align:center;color:#fff;
-  border:4px solid #fff;border-radius:20px;
-  background:linear-gradient(145deg,#31206b,#101b4e);
-  box-shadow:0 10px 0 #070b25,0 25px 70px #000b;
-}
-.winner-title{
-  font:900 clamp(38px,9vw,62px) Impact,Arial Black,sans-serif;
-  color:#ffd83d;
-  -webkit-text-stroke:2px #a84b00;
-  text-shadow:4px 5px #351900;
-  margin-bottom:5px;
-}
-.winner-subtitle{font:900 16px monospace;letter-spacing:2px;margin-bottom:18px}
-.reward-box{
-  margin:0 auto 18px;
-  width:min(88vw,390px);
-  min-height:180px;
-  padding:12px;
-  border:3px dashed #ffd83d;
-  border-radius:14px;
-  background:rgba(255,255,255,.08);
-}
-.reward-label{
-  font:900 13px monospace;color:#ffd83d;letter-spacing:2px;margin-bottom:9px
-}
-#rewardImage{
-  display:block;width:100%;height:135px;object-fit:contain;
-  border-radius:8px;
-}
-.reward-placeholder{
-  height:135px;display:flex;align-items:center;justify-content:center;
-  color:#aaa;font:700 13px monospace
-}
-.winner-note{font:700 12px monospace;color:#d8ddff;margin-bottom:16px}
-#winnerAgain{
-  border:3px solid #fff;border-radius:10px;padding:11px 22px;
-  background:linear-gradient(#62e875,#209e3a);color:#fff;
-  box-shadow:0 4px 0 #145c24;
-  font:900 14px monospace;cursor:pointer;text-shadow:2px 2px #145c24
-}
-#winnerAgain:active{transform:translateY(4px);box-shadow:none}
-
-
-/* =========================
-   LANDSCAPE WINNER SCREEN
-========================= */
-#winnerScreen{
-  padding:12px;
-  overflow:auto;
-}
-.winner-card{
-  width:min(92vw,820px);
-  max-height:92vh;
-  overflow:auto;
-  padding:20px 28px 18px;
-  border-radius:18px;
-}
-.winner-title{
-  font-size:clamp(34px,7vw,58px);
-  line-height:1;
-  margin-bottom:6px;
-}
-.winner-subtitle{
-  font-size:clamp(11px,1.8vw,16px);
-  line-height:1.35;
-  margin-bottom:8px;
-}
-#rewardImage{
-  width:100%;
-  height:clamp(105px,24vh,190px);
-  object-fit:contain;
-}
-.reward-box{
-  width:min(78vw,620px);
-  min-height:150px;
-  padding:10px;
-  margin-bottom:10px;
-}
-.reward-placeholder{
-  height:clamp(105px,24vh,190px);
-  font-size:12px;
-}
-.winner-note{
-  font-size:11px;
-  margin-bottom:9px;
-}
-#winnerAgain{
-  padding:9px 20px;
-}
-
-@media (orientation:landscape) and (max-height:600px){
-  #winnerScreen{padding:8px}
-  .winner-card{
-    width:min(88vw,850px);
-    max-height:96vh;
-    padding:12px 22px 12px;
-    display:grid;
-    grid-template-columns:1fr 1.15fr;
-    grid-template-rows:auto auto auto auto;
-    column-gap:22px;
-    align-items:center;
-  }
-  .winner-title{
-    grid-column:1 / -1;
-    font-size:clamp(32px,7vh,52px);
-  }
-  .winner-subtitle{
-    grid-column:1 / -1;
-    margin:0 0 2px;
-  }
-  #winnerScore{
-    grid-column:1 / -1;
-    margin:0 0 4px !important;
-  }
-  .reward-box{
-    grid-column:2;
-    grid-row:4;
-    width:100%;
-    min-height:0;
-    height:clamp(130px,43vh,220px);
-    margin:0;
-  }
-  #rewardImage,.reward-placeholder{
-    height:clamp(90px,29vh,170px);
-  }
-  .winner-note{
-    grid-column:1;
-    grid-row:4;
-    align-self:center;
-    margin:0;
-    padding:10px;
-  }
-  #winnerAgain{
-    position:absolute;
-    left:50%;
-    bottom:10px;
-    transform:translateX(-50%);
-    z-index:2;
-  }
-  #winnerAgain:active{
-    transform:translateX(-50%) translateY(4px);
-  }
-}
-
-@media (orientation:portrait){
-  .winner-card{
-    width:min(92vw,520px);
-  }
-}
-
-
-@media (orientation:landscape) and (max-height:600px){
-  #startMenu{justify-content:center;padding:8px 16px}
-  .start-logo{font-size:clamp(38px,8vh,62px);margin-top:-8px;letter-spacing:2px}
-  .start-subtitle{font-size:clamp(10px,2.2vh,14px);margin:10px 0 14px;max-width:680px}
-  #startGameBtn{font-size:14px;padding:9px 26px;min-width:165px}
-  .start-credit{bottom:7px;font-size:10px}
-}
-
-
-/* HUD FIX */
-#hud{
-  top:10px;left:14px;right:14px;
-  display:grid;
-  grid-template-columns:1fr 1fr 1.35fr .55fr;
-  align-items:start;gap:8px;
-  font-size:clamp(11px,1.65vw,16px);
-  line-height:1.15;
-  text-shadow:2px 2px #000;
-  white-space:nowrap;
-}
-#hud span{display:block;overflow:hidden;text-overflow:ellipsis}
-#hud span:nth-child(2),#hud span:nth-child(3){text-align:center}
-#hud span:nth-child(4){text-align:right}
-
-
-.power-btn{
-  display:none;
-  background:linear-gradient(145deg,#777,#444);
-  border-color:#aaa;
-  box-shadow:0 4px 0 #222;
-  color:#ccc;
-  text-shadow:none;
-}
-.power-btn.ready{display:block}
-.power-btn.active{
-  background:linear-gradient(145deg,#32b8ff,#0758e8);
-  border-color:#bcecff;
-  box-shadow:0 0 14px #168cff,0 4px 0 #073c9a;
-  color:#fff;
-  text-shadow:0 0 8px #fff;
-  animation:powerPulse 1s infinite alternate;
-}
-@keyframes powerPulse{from{filter:brightness(1)}to{filter:brightness(1.35);transform:scale(1.05)}}
+/* ===== POWER BUTTON ===== */
 #powerDesktop{
-  display:none;
-  position:absolute;right:18px;bottom:88px;z-index:12;
-  border:3px solid #aaa;border-radius:12px;
-  padding:10px 16px;color:#ccc;
-  background:linear-gradient(145deg,#777,#444);
-  box-shadow:0 5px 0 #222;
-  font:900 13px monospace;cursor:pointer;
-  text-shadow:none;
+  position:absolute;
+  right:18px;
+  bottom:86px;
+  z-index:15;
+  border:3px solid #fff;
+  border-radius:10px;
+  padding:8px 12px;
+  color:#fff;
+  background:linear-gradient(#777,#444);
+  box-shadow:0 4px 0 #222;
+  font:900 12px monospace;
+  cursor:not-allowed;
+  text-shadow:2px 2px #222;
+  opacity:.72;
+  filter:grayscale(1);
+  transition:.15s;
 }
-#powerDesktop.ready{display:block}
-#powerDesktop.active{
-  border-color:#c9f4ff;color:#fff;
-  background:linear-gradient(145deg,#32b8ff,#0758e8);
-  box-shadow:0 0 18px #168cff,0 5px 0 #073c9a;
-  text-shadow:0 0 7px #fff;
-  animation:powerPulse 1s infinite alternate;
+#powerDesktop.ready{
+  opacity:1;
+  filter:none;
+  cursor:pointer;
+  background:linear-gradient(#62e8ff,#0878d8);
+  box-shadow:0 4px 0 #064d87,0 0 14px rgba(0,174,255,.65);
+  animation:powerPulse .8s infinite alternate;
 }
-@media(min-width:800px){#powerDesktop{display:block}}
+#powerDesktop.active{opacity:1}
+#powerDesktop:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 #06316d}
+@keyframes powerPulse{from{filter:brightness(1)}to{filter:brightness(1.25)}}
+@media(min-width:800px){#powerDesktop{font-size:13px;padding:9px 14px}}
 
 
 
-/* REWARD BOX SIZE FIX — CSS ONLY
-   IMPORTANT: game/restart JavaScript is intentionally untouched. */
-#winnerScreen{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:12px;
-  overflow:auto;
-}
+
+/* ===== CLEAN WINNER SCREEN ===== */
+#winnerScreen{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:10px;overflow:hidden!important;background:rgba(5,7,18,.84);backdrop-filter:blur(6px)}
 #winnerScreen.show{display:flex}
+.winner-card{width:min(900px,94vw);height:min(520px,92dvh);min-height:280px;padding:26px 32px;color:#fff;border:4px solid #fff;border-radius:22px;background:linear-gradient(145deg,#31206b,#18295f 52%,#101b4e);box-shadow:0 10px 0 #070b25,0 25px 70px #000b;overflow:hidden!important;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;column-gap:34px;align-items:center}
+.winner-title{grid-column:1/-1;grid-row:1;text-align:center;margin:0 0 6px;font:900 clamp(34px,6vw,58px) Impact,"Arial Black",sans-serif;line-height:.95;color:#ffd83d;-webkit-text-stroke:2px #a84b00;text-shadow:4px 5px #351900}
+.winner-subtitle{grid-column:1/-1;grid-row:1;align-self:end;text-align:center;margin:0 0 -25px;font:900 10px monospace;letter-spacing:1.5px;color:#dfe6ff}
+.winner-left{grid-column:1;grid-row:2;align-self:center;justify-self:center;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#winnerScore{order:2;width:100%;margin:0!important;padding:24px 15px;border:3px solid #ffd83d;border-radius:16px;background:rgba(255,216,61,.08);text-align:center;font:900 clamp(18px,3vw,30px) monospace!important;color:#ffd83d!important}
+.winner-note{order:3;width:100%;margin:0!important;text-align:center;color:#d8ddff;font:700 11px monospace;line-height:1.4}
+.reward-box{grid-column:2;grid-row:2;align-self:center;justify-self:center;width:min(270px,28vw);padding:8px!important;margin:0!important;border:3px solid #ffd83d!important;border-radius:16px!important;background:rgba(255,216,61,.07)!important;box-shadow:0 0 0 2px rgba(255,255,255,.18) inset,0 10px 30px #0006!important}
+.reward-label{margin:0 0 7px!important;text-align:center;font:900 11px monospace!important;letter-spacing:1.5px;color:#ffd83d!important}
+#rewardImage{display:block!important;width:100%!important;height:auto!important;aspect-ratio:1103/1467!important;max-height:310px!important;object-fit:contain!important;margin:0 auto!important;border-radius:9px!important;border:2px solid #fffc!important}
+.reward-placeholder{display:none;min-height:180px;align-items:center;justify-content:center;text-align:center;color:#aaa;font:700 11px monospace}
+#winnerAgain{order:1;position:static!important;transform:none!important;margin:0!important;border:3px solid #fff;border-radius:10px;padding:10px 24px;background:linear-gradient(#62e875,#209e3a);color:#fff;box-shadow:0 5px 0 #145c24;font:900 14px monospace;cursor:pointer}
+#winnerAgain:active{transform:translateY(4px)!important;box-shadow:0 1px 0 #145c24}
 
-.winner-card{
-  width:min(92vw,520px);
-  max-height:92vh;
-  overflow:auto;
-  padding:20px 22px 18px;
-}
-
-.reward-box{
-  width:min(62vw,260px);
-  min-height:0;
-  padding:7px;
-  margin:0 auto 10px;
-}
-
-#rewardImage{
-  display:block;
-  width:100%;
-  height:auto;
-  aspect-ratio:1103 / 1467;
-  max-height:260px;
-  object-fit:contain;
-  margin:0 auto;
-}
-
-.reward-placeholder{
-  width:100%;
-  min-height:180px;
-  height:auto;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+/* Portrait */
+@media(orientation:portrait) and (max-width:600px){
+  .winner-card{width:92vw;height:88dvh;padding:18px 14px;column-gap:10px}
+  .winner-title{font-size:clamp(29px,9vw,47px)}
+  .winner-subtitle{font-size:7px;margin-bottom:-18px}
+  .winner-left{gap:8px}
+  #winnerScore{font-size:15px!important;padding:18px 6px}
+  .reward-box{width:min(39vw,180px)}
+  #rewardImage{max-height:245px!important}
+  .reward-label{font-size:7px!important}
+  .winner-note{font-size:8px}
+  #winnerAgain{font-size:11px;padding:8px 18px}
 }
 
-@media (max-width:520px){
-  .winner-card{
-    width:min(88vw,390px);
-    padding:14px 14px 14px;
-  }
-  .reward-box{
-    width:min(58vw,220px);
-    padding:6px;
-  }
-  #rewardImage{
-    max-height:235px;
-  }
-  .reward-placeholder{
-    min-height:170px;
-    font-size:10px;
-  }
-}
-
-@media (orientation:landscape) and (max-height:600px){
-  #winnerScreen{
-    padding:8px;
-    overflow:auto;
-  }
-  .winner-card{
-    width:min(88vw,820px);
-    max-height:96vh;
-    overflow:auto;
-  }
-  .reward-box{
-    width:min(36vw,280px);
-  }
-  #rewardImage{
-    max-height:180px;
-  }
-}
-
-
-/* REWARD PHOTO FRAME — 1103 × 1467 PORTRAIT */
-.reward-box{
-  width:min(58vw,250px) !important;
-  min-height:0 !important;
-  padding:8px !important;
-  border:3px solid #ffd83d !important;
-  border-radius:16px !important;
-  background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,216,61,.06)) !important;
-  box-shadow:0 0 0 2px rgba(255,255,255,.18) inset,0 10px 30px rgba(0,0,0,.35),0 0 22px rgba(255,216,61,.18) !important;
-}
-#rewardImage{
-  display:block !important;
-  width:100% !important;
-  height:auto !important;
-  aspect-ratio:1103 / 1467 !important;
-  max-height:270px !important;
-  object-fit:contain !important;
-  margin:0 auto !important;
-  border-radius:9px !important;
-  border:2px solid rgba(255,255,255,.7) !important;
-  box-shadow:0 3px 12px rgba(0,0,0,.35) !important;
-}
-@media(max-width:520px){
-  .reward-box{width:min(56vw,210px) !important;padding:7px !important}
-  #rewardImage{max-height:245px !important}
-}
+/* Landscape */
 @media(orientation:landscape) and (max-height:600px){
-  .reward-box{width:min(30vw,230px) !important}
-  #rewardImage{max-height:185px !important}
+  .winner-card{width:94vw;height:94dvh;padding:12px 20px;column-gap:22px}
+  .winner-title{font-size:clamp(25px,7vh,44px)}
+  .winner-subtitle{font-size:7px;margin-bottom:-17px}
+  #winnerScore{font-size:clamp(14px,3.5vh,21px)!important;padding:11px 7px}
+  .winner-note{font-size:8px;margin-bottom:4px!important}
+  .reward-box{width:min(25vw,185px);padding:5px!important}
+  .reward-label{font-size:7px!important;margin-bottom:3px!important}
+  #rewardImage{max-height:195px!important}
+  #winnerAgain{padding:7px 17px;font-size:10px}
 }
 
 </style>
 </head>
 <body>
+<audio id="bgMusic" loop preload="auto"></audio>
+<audio id="deathMusic" loop preload="auto"></audio>
+<audio id="rewardMusic" loop preload="auto"></audio>
+
 <div id="startMenu">
   <div class="start-cloud one"></div><div class="start-cloud two"></div>
   <div class="start-logo">Super Mino</div>
@@ -437,23 +175,23 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 
 <div id="winnerScreen">
   <div class="winner-card">
-    <div class="winner-title">YOU ARE WINNER! 🏆</div>
-    <div class="winner-subtitle">PRINCESS RESCUED • ALL 4 LEVELS COMPLETE</div>
-    <div id="winnerScore" style="font:900 14px monospace;color:#ffd83d;margin:-8px 0 14px">FINAL SCORE 000000</div>
+    <div class="winner-title">YOU ARE WINNER 🏆</div>
+    <div class="winner-subtitle">PRINCESS RESCUED </div>
+    <div class="winner-left">
+      <button id="winnerAgain" type="button">↩ BACK TO MENU</button>
+      <div id="winnerScore">FINAL SCORE 000000</div>
+      <div class="winner-note">YAH AAPKA RECORD HAI<br>YOUR FINAL SCORE &amp; REWARD</div>
+    </div>
 
     <div class="reward-box">
-      <div class="reward-label">🎁 YOUR REWARD / REDEEM CODE</div>
-      <!-- Replace reward.png with your own redeem-code PNG -->
-      <img id="rewardImage" src="supermino.jpg" alt="Reward / Redeem Code"
-           onerror="this.style.display='none';document.getElementById('rewardPlaceholder').style.display='flex';">
+      <div class="reward-label">🎁 YOUR REWARD</div>
+      <img id="rewardImage" src="supermino.jpg" alt="Your Reward"
+        onerror="this.style.display='none';document.getElementById('rewardPlaceholder').style.display='flex';">
       <div id="rewardPlaceholder" class="reward-placeholder">
-        YOUR REWARD IMAGE GOES HERE<br>
-        <small>Keep <b>supermino.jpg</b> in the same folder as <b>index.html</b></small>
+        YOUR REWARD IMAGE GOES HERE
       </div>
     </div>
 
-    <div class="winner-note">Your reward image is displayed here after you rescue the princess.</div>
-    <button id="winnerAgain" type="button">PLAY AGAIN</button>
   </div>
 </div>
 
@@ -481,30 +219,57 @@ let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},bo
 const bgMusic=document.getElementById("bgMusic");
 const deathMusic=document.getElementById("deathMusic");
 const rewardMusic=document.getElementById("rewardMusic");
-let bgMusicStarted=false;
+
+const MUSIC_FILES={
+  background:"game.mp3",
+  death:"gameover.mp3",
+  winning:"end.mp3"
+};
+
+function setupMusic(){
+  bgMusic.src=MUSIC_FILES.background;
+  deathMusic.src=MUSIC_FILES.death;
+  rewardMusic.src=MUSIC_FILES.winning;
+
+  bgMusic.loop=true;
+  deathMusic.loop=false;
+  rewardMusic.loop=false;
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>a.preload="auto");
+
+  bgMusic.volume=.45;
+  deathMusic.volume=.65;
+  rewardMusic.volume=.70;
+}
+
+function stopAllMusic(reset=true){
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>{
+    a.pause();
+    if(reset){try{a.currentTime=0}catch(_){}} 
+  });
+}
+
+function playMusic(audio){
+  if(!audio)return;
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>{
+    if(a!==audio)a.pause();
+  });
+  audio.play().catch(()=>{});
+}
 
 function playBackgroundMusic(){
-  if(!gameStarted||gameFinished||!bgMusic)return;
-  bgMusic.volume=0.45;
-  bgMusic.play().then(()=>{bgMusicStarted=true}).catch(()=>{});
+  if(gameFinished || deathAnim)return;
+  playMusic(bgMusic);
 }
-function stopBackgroundMusic(){
-  if(bgMusic) bgMusic.pause();
-}
+
 function playDeathMusic(){
-  if(!deathMusic)return;
-  deathMusic.currentTime=0;
-  deathMusic.volume=0.65;
-  deathMusic.play().catch(()=>{});
+  playMusic(deathMusic);
 }
+
 function playRewardMusic(){
-  stopBackgroundMusic();
-  if(!deathMusic||!rewardMusic)return;
-  deathMusic.pause();
-  rewardMusic.currentTime=0;
-  rewardMusic.volume=0.7;
-  rewardMusic.play().catch(()=>{});
+  playMusic(rewardMusic);
 }
+
+setupMusic();
 
 
 function resize(){canvas.width=W;canvas.height=H} resize(); addEventListener("resize",resize);
@@ -543,11 +308,14 @@ function usePower(){
 const powerDesktop=document.getElementById("powerDesktop");
 powerDesktop.addEventListener("click",usePower);
 function updatePowerUI(){
- const active=powerReady&&currentLevel===3;
- powerDesktop.classList.toggle("ready",powerReady);
- powerDesktop.classList.toggle("active",active);
- powerDesktop.textContent=active?"⚡ SHOOT":"⚡ POWER";
- powerDesktop.title=active?"BLUE POWER READY — SHOOT DRAGON":"Power collected — unlocks at the dragon";
+  const usable=powerReady&&currentLevel===3&&!gameFinished;
+  powerDesktop.classList.toggle("ready",usable);
+  powerDesktop.classList.toggle("active",usable);
+  powerDesktop.disabled=!usable;
+  powerDesktop.textContent=usable?"⚡ SHOOT":"⚡ POWER";
+  powerDesktop.title=usable
+    ?"BLUE POWER READY — SHOOT DRAGON"
+    :"POWER OFF — collect the power and reach the dragon";
 }
 
 
@@ -660,6 +428,7 @@ function die(){
  keys.left=keys.right=keys.jump=false;
  p.vx=0;p.vy=-10;p.onGround=false;
  lives--;
+  playDeathMusic();
 }
 function update(){
  if(!gameStarted||levelWon||gameFinished)return;
@@ -1091,45 +860,92 @@ canvas.addEventListener("pointerdown", (e)=>{
      deathTimer=0;
      loadLevel(currentLevel);
    }else{
-     // All 3 hearts used: reset the entire game.
-     lives=3;
-     score=0;
-     coinCount=0;
-     currentLevel=0;
-     deathAnim=false;
-     deathTimer=0;
-     gameFinished=false;
-     levelWon=false;
-     loadLevel(0);
+     // All 3 hearts used: reset the entire game AND restore Level-3 power.
+      lives=3;
+      score=0;
+      coinCount=0;
+      currentLevel=0;
+      deathAnim=false;
+      deathTimer=0;
+      gameFinished=false;
+      levelWon=false;
+      powerReady=false;
+      powerCollected=false;
+      blueShot=null;
+      powerBoxLevel=2;
+      const powerSpots=[690,1570,2470,3400];
+      powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
+      loadLevel(0);
+      updatePowerUI();
+      playBackgroundMusic();
    }
  }
 });
 
+
+/* Winner -> Menu. Next START GAME is a completely fresh run. */
+document.getElementById("winnerAgain").addEventListener("click",()=>{
+  document.getElementById("winnerScreen").classList.remove("show");
+  stopAllMusic();
+  gameStarted=false; gameFinished=false; levelWon=false;
+  currentLevel=0; skipCount=0; score=0; coinCount=0; lives=3;
+  powerReady=false; powerCollected=false; blueShot=null; powerBoxLevel=2;
+  const powerSpots=[690,1570,2470,3400];
+  powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
+  loadLevel(0); updateHud();
+  playBackgroundMusic();
+  const menu=document.getElementById("startMenu");
+  menu.style.opacity="1"; menu.style.pointerEvents="auto";
+});
+
 function loop(){update();draw();requestAnimationFrame(loop)}
 function start(){
+ skipCount=0;
  gameStarted=true;score=0;coinCount=0;lives=3;powerReady=false;powerFlash=0;powerCollected=false;blueShot=null;
 powerBoxLevel=2;
 const powerSpots=[690,1570,2470,3400];
 powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
 loadLevel(0);
- const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";setTimeout(()=>sm.remove(),350)
+ const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
 }
 document.getElementById("startGameBtn").onclick=start;
 document.addEventListener("keydown",e=>{if(!gameStarted&&(e.code==="Enter"||e.code==="Space"))start()});
 
-// TEMPORARY LEVEL SKIP BUTTON — remove this block when no longer needed.
-document.getElementById("skipLevelBtn").addEventListener("click", () => {
-  if(!gameStarted) return;
-  if(currentLevel < LEVELS.length - 1){
-    loadLevel(currentLevel + 1);
-  }else{
-    lives = 3;
-    score += 5000;
-    loadLevel(0);
+// LEVEL SKIP: 4 presses complete the game.
+let skipCount=0;
+const skipLevelBtn=document.getElementById("skipLevelBtn");
+
+skipLevelBtn.addEventListener("click",()=>{
+  if(!gameStarted||gameFinished)return;
+  skipCount++;
+
+  if(skipCount<4){
+    loadLevel(skipCount);
+    levelWon=false;
+    gameFinished=false;
+    hideMessage();
+    playBackgroundMusic();
+    return;
   }
+
+  // Fourth press = instant winner.
+  currentLevel=3;
+  gameFinished=true;
+  levelWon=false;
+  score+=10000;
+  if(princess) princess.rescued=true;
+  hideMessage();
+  stopAllMusic();
+  playRewardMusic();
+
+  document.getElementById("winnerScreen").classList.add("show");
+  document.getElementById("winnerScore").textContent=
+    "FINAL SCORE "+String(score).padStart(6,"0");
 });
 
-loadLevel(0);loop();
+loadLevel(0);
+playMusic(bgMusic);
+loop();
 
 
 const rewardImage = document.getElementById("rewardImage");
@@ -1138,12 +954,7 @@ rewardImage.addEventListener("load",()=>{
   rewardImage.style.display="block";
   rewardPlaceholder.style.display="none";
 });
-document.getElementById("winnerAgain").addEventListener("click",()=>{
-  document.getElementById("winnerScreen").classList.remove("show");
-  lives=3;score=0;coinCount=0;gameFinished=false;
-  if(rewardMusic){ rewardMusic.pause(); rewardMusic.currentTime=0; }
-  loadLevel(0); playBackgroundMusic();
-});
+
 </script>
 </body>
 </html>

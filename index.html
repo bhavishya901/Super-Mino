@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Super Mino — 4 Levels</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#111;font-family:monospace}
+body{display:flex;align-items:center;justify-content:center}
+#wrap{position:relative;width:100vw;height:100vh;overflow:hidden;background:#5aaeff}
+canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+#hud{position:absolute;top:12px;left:18px;right:18px;display:flex;justify-content:space-between;gap:10px;color:#fff;font-weight:900;font-size:clamp(12px,2vw,18px);text-shadow:3px 3px #000;pointer-events:none;z-index:5}
+#message{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+color:#fff;text-align:center;font-weight:bold;text-shadow:3px 3px #000;font-size:22px;
+pointer-events:none;z-index:20;opacity:0;transition:.25s;background:rgba(0,0,0,.25)}
+#message.show{pointer-events:auto}
+.game-panel{padding:28px 34px;border:4px solid #fff;border-radius:16px;background:linear-gradient(#347edb,#17488e);
+box-shadow:0 7px 0 #091d49,0 20px 45px #0008;min-width:290px}
+.game-title{font-size:clamp(25px,5vw,38px);margin-bottom:18px;letter-spacing:1px}
+#restartBtn,#nextBtn{margin:8px 5px 0;border:4px solid #fff;border-radius:10px;padding:11px 18px;
+font:900 15px monospace;color:#fff;background:linear-gradient(#ffd43a,#e58d00);
+box-shadow:0 5px 0 #854800;cursor:pointer;text-shadow:2px 2px #8b4d00}
+#restartBtn:active,#nextBtn:active{transform:translateY(5px);box-shadow:0 0 0 #854800}
+#nextBtn{background:linear-gradient(#5ee36c,#1f9e36);box-shadow:0 5px 0 #176327;text-shadow:2px 2px #176327}
+#touch{position:absolute;left:0;right:0;bottom:15px;display:flex;justify-content:space-between;padding:0 18px;z-index:10;pointer-events:none}
+.pad{display:flex;gap:10px}.btn{width:58px;height:58px;border:3px solid #fff8;border-radius:10px;background:#222b;color:#fff;font-size:27px;font-weight:bold;pointer-events:auto;touch-action:none}
+.btn:active{background:#fff5;color:#111}
+#startMenu{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
+background:linear-gradient(180deg,#48a9ff,#78c8ff 58%,#bcecff);color:#fff;text-align:center;transition:opacity .35s}
+#startMenu:before{content:"";position:absolute;width:520px;height:180px;left:-80px;bottom:0;background:#55b82f;border-radius:50% 50% 0 0;box-shadow:620px 15px 0 #49a82b,1120px 0 0 #55b82f}
+.start-cloud{position:absolute;width:130px;height:34px;background:#fff;border-radius:30px;opacity:.95;box-shadow:35px -20px 0 4px #fff,75px -10px 0 2px #fff}
+.start-cloud.one{top:14%;left:10%}.start-cloud.two{top:25%;right:12%;transform:scale(.8)}
+.start-logo{
+  position:relative;
+  z-index:2;
+  font-family:Impact,"Arial Black",sans-serif;
+  font-size:clamp(42px,8vw,72px);
+  line-height:.95;
+  letter-spacing:3px;
+  color:#fff;
+  -webkit-text-stroke:3px #c51f27;
+  text-shadow:
+    0 4px 0 #a9161c,
+    0 7px 0 #7b1116,
+    0 10px 0 rgba(0,0,0,.16);
+  filter:drop-shadow(0 5px 0 rgba(255,255,255,.18));
+  transform:skew(-2deg);
+}
+.start-logo::after{
+  content:"Super Mino";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.7);
+  pointer-events:none;
+}
+.start-subtitle{position:relative;z-index:2;font:900 clamp(11px,1.8vw,17px) monospace;letter-spacing:1.5px;line-height:1.5;color:#fff;text-shadow:2px 2px #2572b7;margin:10px 0 20px;max-width:min(80vw,620px)}
+#startGameBtn{position:relative;z-index:2;border:3px solid #fff;border-radius:10px;padding:11px 30px;min-width:180px;color:#fff;
+background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18px #0004;font:900 15px monospace;cursor:pointer;text-shadow:2px 2px #8a4b00}
+.start-credit{position:absolute;z-index:3;bottom:12px;left:0;right:0;font:900 12px monospace;letter-spacing:2px;color:#fff;text-shadow:2px 2px #2572b7}
+@media(min-width:800px){#touch{display:none}}
+
+/* ===== POWER BUTTON ===== */
+#powerDesktop{
+  position:absolute;
+  right:18px;
+  bottom:86px;
+  z-index:15;
+  border:3px solid #fff;
+  border-radius:10px;
+  padding:8px 12px;
+  color:#fff;
+  background:linear-gradient(#777,#444);
+  box-shadow:0 4px 0 #222;
+  font:900 12px monospace;
+  cursor:not-allowed;
+  text-shadow:2px 2px #222;
+  opacity:.72;
+  filter:grayscale(1);
+  transition:.15s;
+}
+#powerDesktop.ready{
+  opacity:1;
+  filter:none;
+  cursor:pointer;
+  background:linear-gradient(#62e8ff,#0878d8);
+  box-shadow:0 4px 0 #064d87,0 0 14px rgba(0,174,255,.65);
+  animation:powerPulse .8s infinite alternate;
+}
+#powerDesktop.active{opacity:1}
+#powerDesktop:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 #06316d}
+@keyframes powerPulse{from{filter:brightness(1)}to{filter:brightness(1.25)}}
+@media(min-width:800px){#powerDesktop{font-size:13px;padding:9px 14px}}
+
+
+
+
+/* ===== CLEAN WINNER SCREEN ===== */
+#winnerScreen{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:10px;overflow:hidden!important;background:rgba(5,7,18,.84);backdrop-filter:blur(6px)}
+#winnerScreen.show{display:flex}
+.winner-card{width:min(900px,94vw);height:min(520px,92dvh);min-height:280px;padding:26px 32px;color:#fff;border:4px solid #fff;border-radius:22px;background:linear-gradient(145deg,#31206b,#18295f 52%,#101b4e);box-shadow:0 10px 0 #070b25,0 25px 70px #000b;overflow:hidden!important;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;column-gap:34px;align-items:center}
+.winner-title{grid-column:1/-1;grid-row:1;text-align:center;margin:0 0 6px;font:900 clamp(34px,6vw,58px) Impact,"Arial Black",sans-serif;line-height:.95;color:#ffd83d;-webkit-text-stroke:2px #a84b00;text-shadow:4px 5px #351900}
+.winner-subtitle{grid-column:1/-1;grid-row:1;align-self:end;text-align:center;margin:0 0 -25px;font:900 10px monospace;letter-spacing:1.5px;color:#dfe6ff}
+.winner-left{grid-column:1;grid-row:2;align-self:center;justify-self:center;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#winnerScore{order:2;width:100%;margin:0!important;padding:24px 15px;border:3px solid #ffd83d;border-radius:16px;background:rgba(255,216,61,.08);text-align:center;font:900 clamp(18px,3vw,30px) monospace!important;color:#ffd83d!important}
+.winner-note{order:3;width:100%;margin:0!important;text-align:center;color:#d8ddff;font:700 11px monospace;line-height:1.4}
+.reward-box{grid-column:2;grid-row:2;align-self:center;justify-self:center;width:min(270px,28vw);padding:8px!important;margin:0!important;border:3px solid #ffd83d!important;border-radius:16px!important;background:rgba(255,216,61,.07)!important;box-shadow:0 0 0 2px rgba(255,255,255,.18) inset,0 10px 30px #0006!important}
+.reward-label{margin:0 0 7px!important;text-align:center;font:900 11px monospace!important;letter-spacing:1.5px;color:#ffd83d!important}
+#rewardImage{display:block!important;width:100%!important;height:auto!important;aspect-ratio:1103/1467!important;max-height:310px!important;object-fit:contain!important;margin:0 auto!important;border-radius:9px!important;border:2px solid #fffc!important}
+.reward-placeholder{display:none;min-height:180px;align-items:center;justify-content:center;text-align:center;color:#aaa;font:700 11px monospace}
+#winnerAgain{order:1;position:static!important;transform:none!important;margin:0!important;border:3px solid #fff;border-radius:10px;padding:10px 24px;background:linear-gradient(#62e875,#209e3a);color:#fff;box-shadow:0 5px 0 #145c24;font:900 14px monospace;cursor:pointer}
+#winnerAgain:active{transform:translateY(4px)!important;box-shadow:0 1px 0 #145c24}
+
+/* Portrait */
+@media(orientation:portrait) and (max-width:600px){
+  .winner-card{width:92vw;height:88dvh;padding:18px 14px;column-gap:10px}
+  .winner-title{font-size:clamp(29px,9vw,47px)}
+  .winner-subtitle{font-size:7px;margin-bottom:-18px}
+  .winner-left{gap:8px}
+  #winnerScore{font-size:15px!important;padding:18px 6px}
+  .reward-box{width:min(39vw,180px)}
+  #rewardImage{max-height:245px!important}
+  .reward-label{font-size:7px!important}
+  .winner-note{font-size:8px}
+  #winnerAgain{font-size:11px;padding:8px 18px}
+}
+
+/* Landscape */
+@media(orientation:landscape) and (max-height:600px){
+  .winner-card{width:94vw;height:94dvh;padding:12px 20px;column-gap:22px}
+  .winner-title{font-size:clamp(25px,7vh,44px)}
+  .winner-subtitle{font-size:7px;margin-bottom:-17px}
+  #winnerScore{font-size:clamp(14px,3.5vh,21px)!important;padding:11px 7px}
+  .winner-note{font-size:8px;margin-bottom:4px!important}
+  .reward-box{width:min(25vw,185px);padding:5px!important}
+  .reward-label{font-size:7px!important;margin-bottom:3px!important}
+  #rewardImage{max-height:195px!important}
+  #winnerAgain{padding:7px 17px;font-size:10px}
+}
+
+</style>
+</head>
+<body>
+<audio id="bgMusic" loop preload="auto"></audio>
+<audio id="deathMusic" preload="auto"></audio>
+<audio id="rewardMusic" preload="auto"></audio>
+
+<div id="startMenu">
+  <div class="start-cloud one"></div><div class="start-cloud two"></div>
+  <div class="start-logo">Super Mino</div>
+  <div class="start-subtitle">WIN THE GAME AND GET A REDEEM CODE🎁</div>
+  <button id="startGameBtn">▶ START GAME</button>
+  <div class="start-credit">MADE BY BHAVISHYA</div>
+</div>
+
+
+<div id="winnerScreen">
+  <div class="winner-card">
+    <div class="winner-title">YOU ARE WINNER 🏆</div>
+    <div class="winner-subtitle">PRINCESS RESCUED </div>
+    <div class="winner-left">
+      <button id="winnerAgain" type="button">↩ BACK TO MENU</button>
+      <div id="winnerScore">FINAL SCORE 000000</div>
+      <div class="winner-note"><br>Yah le tara  &amp; REWARD</div>
+    </div>
+
+    <div class="reward-box">
+      <div class="reward-label">🎁 YOUR REWARD</div>
+      <img id="rewardImage" src="supermino.jpg" alt="Your Reward"
+        onerror="this.style.display='none';document.getElementById('rewardPlaceholder').style.display='flex';">
+      <div id="rewardPlaceholder" class="reward-placeholder">
+        YOUR REWARD IMAGE GOES HERE
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="wrap">
+<canvas id="game"></canvas>
+<div id="hud">
+  <span id="score">SCORE 000000</span><span id="coins">COINS ×00</span><span id="world">WORLD 1-1</span><span id="lives">♥ 3</span>
+</div>
+<div id="message"></div>
+<button id="powerDesktop">⚡ SHOOT</button>
+<div id="touch">
+  <div class="pad"><button class="btn" id="left">◀</button><button class="btn" id="right">▶</button></div>
+  <div class="pad"><button class="btn" id="jump">A</button></div>
+</div>
+</div>
+
+<script>
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+ctx.imageSmoothingEnabled=false;
+const W=960,H=540;
+let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false;
+const keys={left:false,right:false,jump:false},LEVELS=[];
+let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},boss=null,princess=null,deathAnim=false,deathTimer=0,powerReady=false,powerFlash=0,powerBoxLevel=-1,powerBoxX=0,powerCollected=false;
+const bgMusic=document.getElementById("bgMusic");
+const deathMusic=document.getElementById("deathMusic");
+const rewardMusic=document.getElementById("rewardMusic");
+
+const MUSIC_FILES={
+  background:"game.mp3",
+  death:"gameover.mp3",
+  winning:"end.mp3"
+};
+
+function setupMusic(){
+  bgMusic.src=MUSIC_FILES.background;
+  deathMusic.src=MUSIC_FILES.death;
+  rewardMusic.src=MUSIC_FILES.winning;
+
+  bgMusic.loop=true;
+  deathMusic.loop=false;
+  rewardMusic.loop=false;
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>a.preload="auto");
+
+  bgMusic.volume=.45;
+  deathMusic.volume=.65;
+  rewardMusic.volume=.70;
+}
+
+function stopAllMusic(reset=true){
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>{
+    a.pause();
+    if(reset){try{a.currentTime=0}catch(_){}} 
+  });
+}
+
+function playMusic(audio){
+  if(!audio)return;
+  [bgMusic,deathMusic,rewardMusic].forEach(a=>{
+    if(a!==audio)a.pause();
+  });
+  audio.play().catch(()=>{});
+}
+
+function playBackgroundMusic(){
+  if(gameFinished || deathAnim)return;
+  playMusic(bgMusic);
+}
+
+function playDeathMusic(){
+  playMusic(deathMusic);
+}
+
+function playRewardMusic(){
+  playMusic(rewardMusic);
+}
+
+setupMusic();
+
+
+function resize(){canvas.width=W;canvas.height=H} resize(); addEventListener("resize",resize);
+addEventListener("keydown",e=>{
+ if(["ArrowLeft","ArrowRight","ArrowUp","Space","KeyA","KeyD","KeyW","Enter"].includes(e.code))e.preventDefault();
+ if(e.code==="ArrowLeft"||e.code==="KeyA")keys.left=true;
+ if(e.code==="ArrowRight"||e.code==="KeyD")keys.right=true;
+ if(e.code==="ArrowUp"||e.code==="Space"||e.code==="KeyW")keys.jump=true;
+ if(e.code==="Enter" && (levelWon||gameFinished)) advance();
+});
+addEventListener("keyup",e=>{
+ if(e.code==="ArrowLeft"||e.code==="KeyA")keys.left=false;
+ if(e.code==="ArrowRight"||e.code==="KeyD")keys.right=false;
+ if(e.code==="ArrowUp"||e.code==="Space"||e.code==="KeyW")keys.jump=false;
+});
+function bind(id,key){
+ const b=document.getElementById(id);
+ b.addEventListener("pointerdown",e=>{e.preventDefault();keys[key]=true});
+ ["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();keys[key]=false}));
+}
+bind("left","left");bind("right","right");bind("jump","jump");
+let blueShot=null;
+function usePower(){
+ if(!powerReady||gameFinished||currentLevel!==3||blueShot)return;
+ // Fire a blue energy projectile toward the dragon.
+ powerReady=false;
+ blueShot={
+   x:p.x+(p.face>0?28:-8),
+   y:p.y+18,
+   vx:p.face>0?11:-11,
+   life:0
+ };
+ powerFlash=20;
+ updatePowerUI();
+}
+const powerDesktop=document.getElementById("powerDesktop");
+powerDesktop.addEventListener("click",usePower);
+function updatePowerUI(){
+  const usable=powerReady&&currentLevel===3&&!gameFinished;
+  powerDesktop.classList.toggle("ready",usable);
+  powerDesktop.classList.toggle("active",usable);
+  powerDesktop.disabled=!usable;
+  powerDesktop.textContent=usable?"⚡ SHOOT":"⚡ POWER";
+  powerDesktop.title=usable
+    ?"BLUE POWER READY — SHOOT DRAGON"
+    :"POWER OFF — collect the power and reach the dragon";
+}
+
+
+function makeLevel(name,theme,length,platforms,obstacleBlocks,pipeData,coinData,enemyData,goalData,extra={}){
+ return {name,theme,length,platforms,blocks:obstacleBlocks,pipes:pipeData,coins:coinData,enemies:enemyData,goal:goalData,extra};
+}
+const P=(x,y,w,h)=>({x,y,w,h});
+const B=(x,y,type="?")=>({x,y,w:42,h:42,type});
+const C=(x,y)=>({x,y,taken:false,bob:Math.random()*6});
+const E=(x,vx=-2.5)=>({x,y:398,w:32,h:32,vx,dead:false});
+const Q=(x,y,w=70,h=80)=>({x,y,w,h});
+
+LEVELS.push(makeLevel(
+ "OUTDOOR","outdoor",5350,
+ [P(0,430,1080,110),P(1190,430,730,110),P(2030,430,720,110),P(2860,430,720,110),P(3690,430,960,110)],
+ [B(430,330),B(472,330,"brick"),B(514,330),B(1350,300,"brick"),B(1392,300),B(1434,300,"brick"),B(2230,285),B(2272,285,"brick"),B(2314,285),B(3070,315,"brick"),B(3112,315),B(3154,315,"brick")],
+ [Q(760,350),Q(1515,350),Q(2530,350),Q(3360,350)],
+ [[451,290],[535,290],[790,315],[1371,260],[1455,260],[1550,315],[2251,245],[2335,245],[2550,315],[3091,275],[3175,275],[3380,315],[920,380],[1780,380],[2690,380],[3510,380]].map(a=>C(...a)),
+ [E(610),E(1290),E(2390,-.9),E(3260,-.9)],
+ {x:4960,y:190,type:"flag"}
+));
+
+LEVELS.push(makeLevel(
+ "UNDERGROUND","lava",5100,
+ [P(0,430,650,110),P(780,430,620,110),P(1510,430,690,110),P(2370,430,650,110),P(3180,430,1220,110)],
+ [B(390,330),B(432,330,"brick"),B(474,330),
+  B(920,285,"brick"),B(962,285),B(1004,285,"brick"),
+  B(1710,300),B(1752,300,"brick"),B(1794,300),
+  B(2550,275,"brick"),B(2592,275),B(2634,275,"brick"),
+  B(3420,305),B(3462,305,"brick"),B(3504,305)],
+ [Q(575,350),Q(1270,350),Q(2080,350),Q(2910,350)],
+ [[411,290],[495,290],[950,245],[1034,245],[1731,260],[1815,260],[2571,235],[2655,235],[3441,265],[3525,265],[620,380],[1340,380],[2190,380],[3100,380]].map(a=>C(...a)),
+ [E(530),E(1130,-.9),E(1920,-.8),E(2760,-.9),E(3630,-1)],
+ {x:4710,y:190,type:"door"},
+ {lavaPits:[[650,780],[1400,1510],[2200,2370],[3020,3180]],rock:true}
+));
+
+LEVELS.push(makeLevel(
+ "FOREST","forest",5250,
+ [P(0,430,920,110),P(1040,430,800,110),P(1970,430,690,110),P(2780,430,740,110),P(3650,430,950,110)],
+ [B(360,330),B(402,330,"brick"),B(444,330),B(1270,300),B(1312,300,"brick"),B(1354,300),B(2140,285,"brick"),B(2182,285),B(2224,285,"brick"),B(2990,315),B(3032,315,"brick"),B(3074,315)],
+ [Q(690,350),Q(1570,350),Q(2470,350),Q(3400,350)],
+ [[381,290],[465,290],[1291,260],[1375,260],[2161,245],[2245,245],[3011,275],[3095,275],[700,380],[1600,380],[2500,380],[3430,380]].map(a=>C(...a)),
+ [E(570),E(1450,-.8),E(2280,-.9),E(3160,-.8),E(3820,-1)],
+ {x:4920,y:190,type:"flag"},
+ {trees:true}
+));
+
+LEVELS.push(makeLevel(
+ "CASTLE","castle",5500,
+ [P(0,430,900,110),P(1020,430,730,110),P(1830,430,700,110),P(2650,430,690,110),P(3460,430,2040,110)],
+ [B(400,320,"brick"),B(442,320),B(484,320,"brick"),B(1200,285),B(1242,285,"brick"),B(1284,285),B(2000,300,"brick"),B(2042,300),B(2084,300,"brick"),B(2800,270),B(2842,270,"brick"),B(2884,270),B(3620,300,"brick"),B(3662,300),B(3704,300,"brick")],
+ [Q(700,350),Q(1500,350),Q(2310,350),Q(3160,350)],
+ [[421,280],[505,280],[1221,235],[1305,235],[2021,250],[2105,250],[2821,220],[2905,220],[3641,250],[3725,250]].map(a=>C(...a)),
+ [E(580),E(1380,-.9),E(2180,-.8),E(3020,-.9)],
+ {x:5170,y:185,type:"dragon"},
+ {castle:true,bossX:4550,princessX:5350}
+));
+
+function loadLevel(i){
+ currentLevel=i;
+ const L=LEVELS[i];
+ goal={...L.goal};
+ solids=L.platforms.map(o=>({...o}));
+ // Extend the final ground all the way underneath the finish flag.
+ if(i<3){
+   const last=L.platforms[L.platforms.length-1];
+   const endX=last.x+last.w;
+   const neededEnd=goal.x+150;
+   if(neededEnd>endX){
+     solids.push({x:endX,y:430,w:neededEnd-endX,h:110});
+   }
+ }
+ blocks=L.blocks.map(o=>({...o}));
+ if(currentLevel===powerBoxLevel&&!powerCollected){
+   // Place the special box above one of the level's existing sections.
+   blocks.push({x:powerBoxX,y:285,w:42,h:42,type:"power"});
+ }
+ pipes=L.pipes.map(o=>({...o}));
+ coins=L.coins.map(o=>({...o,taken:false}));
+ enemies=L.enemies.map(o=>({...o,dead:false}));
+ boss=null;
+ princess=null;
+ if(i===3){
+   boss={x:L.extra.bossX,y:335,w:92,h:95,vx:0,vy:0,hp:6,active:true,fire:0};
+   princess={x:L.extra.princessX,y:368,w:32,h:58,rescued:false};
+ }
+ p={x:70,y:370,w:30,h:42,vx:0,vy:0,onGround:false,face:1};
+ cam=0;levelWon=false;gameFinished=false;prevJump=false;deathAnim=false;deathTimer=0;updatePowerUI();
+ hideMessage();
+ updateHud();
+}
+function rects(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function allSolids(){return solids.concat(blocks,pipes)}
+function move(o){
+ o.x+=o.vx;
+ for(const s of allSolids())if(rects(o,s)){
+   if(o.vx>0)o.x=s.x-o.w;else if(o.vx<0)o.x=s.x+s.w;o.vx=0;
+ }
+ o.y+=o.vy;o.onGround=false;
+ for(const s of allSolids())if(rects(o,s)){
+   if(o.vy>0){o.y=s.y-o.h;o.vy=0;o.onGround=true}
+   else if(o.vy<0){o.y=s.y+s.h;o.vy=0}
+ }
+}
+function die(){
+ if(deathAnim||gameFinished)return;
+ deathAnim=true;
+ deathTimer=150; // animation duration; gameplay remains paused after it
+ keys.left=keys.right=keys.jump=false;
+ p.vx=0;p.vy=-10;p.onGround=false;
+ lives--;
+  bgMusic.pause();
+  try{bgMusic.currentTime=0}catch(_){}
+  playDeathMusic();
+}
+function update(){
+ if(!gameStarted||levelWon||gameFinished)return;
+ if(deathAnim){
+   if(deathTimer>0){
+     deathTimer--;
+     p.vy+=.55;
+     p.y+=p.vy;
+   }else{
+     // Stay on the death screen until the player presses the button.
+     p.vx=0;
+   }
+   updateHud();
+   return;
+ }
+ const L=LEVELS[currentLevel];
+  // Movement tuned per level.
+  const movement=[
+    {accel:.56,max:5.2},
+    {accel:.59,max:5.5},
+    {accel:.62,max:5.8},
+    {accel:.68,max:6.4}
+  ][currentLevel]||{accel:.58,max:5.4};
+  const {accel,max}=movement;
+ if(keys.left){p.vx-=accel;p.face=-1}
+ if(keys.right){p.vx+=accel;p.face=1}
+ if(!keys.left&&!keys.right)p.vx*=.78;
+ p.vx=Math.max(-max,Math.min(max,p.vx));
+ if(keys.jump&&!prevJump&&p.onGround){p.vy=-14;p.onGround=false}
+ prevJump=keys.jump;p.vy+=.58;if(p.vy>13)p.vy=13;
+ move(p);
+
+ for(const b of blocks){
+   if(b.type==="power"){
+     // Touching the special blue box from ANY direction collects the power.
+     if(rects(p,{x:b.x-6,y:b.y-6,w:b.w+12,h:b.h+12})){
+       b.type="powerUsed";
+       powerCollected=true;
+       score+=1000;
+       powerReady=true;
+       powerFlash=35;
+       updatePowerUI();
+     }
+   }else if(b.type==="?"&&p.vy<0&&p.x+p.w>b.x&&p.x<b.x+b.w&&p.y<=b.y+b.h+5&&p.y>b.y){
+     b.type="used";score+=100;p.vy=.2;
+   }
+ }
+ for(const c of coins)if(!c.taken&&rects(p,{x:c.x-10,y:c.y-10,w:20,h:20})){c.taken=true;coinCount++;score+=200}
+
+ // Blue energy shot. It can defeat the Level 4 dragon in one hit.
+ if(blueShot){
+   blueShot.x+=blueShot.vx;
+   blueShot.life++;
+   if(currentLevel===3&&boss&&boss.active&&rects(
+      {x:blueShot.x,y:blueShot.y,w:34,h:22},
+      {x:boss.x-12,y:boss.y-8,w:145,h:105}
+   )){
+      boss.hp=0;
+      boss.active=false;
+      boss.projectile=null;
+      score+=12000;
+      powerFlash=45;
+      blueShot=null;
+   }else if(blueShot.life>100||blueShot.x<cam-150||blueShot.x>cam+W+150){
+      blueShot=null;
+   }
+ }
+
+ for(const e of enemies){
+   if(e.dead)continue;e.x+=e.vx;
+   if(e.x<0||e.x+e.w>L.length)e.vx*=-1;
+   for(const s of allSolids())if(rects(e,s))e.vx*=-1;
+   if(rects(p,e)){
+     if(p.vy>1&&p.y+p.h-e.y<20){e.dead=true;score+=500;p.vy=-8}
+     else{die();return}
+   }
+ }
+ // Level 2 lava pits.
+ if(currentLevel===1){
+   for(const pit of L.extra.lavaPits)if(p.x+p.w>pit[0]&&p.x<pit[1]&&p.y+p.h>425){die();return}
+ }
+ // Boss level.
+ if(currentLevel===3&&boss&&boss.active){
+   boss.fire++;
+   boss.moveTick=(boss.moveTick||0)+1;
+
+   // Dragon moves side-to-side and becomes faster as its health drops.
+   const rage=1+(6-boss.hp)*.12;
+   boss.x += Math.sin(boss.moveTick/42)*.7*rage;
+
+   // Three different attacks: fireball, low fire wave, and a falling fireball.
+   if(boss.fire>95){
+     boss.fire=0;
+     boss.attack=(boss.attack||0)+1;
+     if(boss.attack%3===1){
+       boss.projectile={x:boss.x-20,y:365,vx:-4.4*rage,vy:-.2,life:0,type:"orb"};
+     }else if(boss.attack%3===2){
+       boss.projectile={x:boss.x-20,y:408,vx:-5.2*rage,vy:0,life:0,type:"wave"};
+     }else{
+       boss.projectile={x:boss.x-5,y:245,vx:-2.5*rage,vy:3.2,life:0,type:"fall"};
+     }
+   }
+
+   if(rects(p,boss)){
+     if(p.vy>1&&p.y+p.h-boss.y<28){
+       boss.hp--;score+=800;p.vy=-10;
+       if(boss.hp<=0){boss.active=false;score+=10000}
+     }else{die();return}
+   }
+
+   if(boss.projectile){
+     const f=boss.projectile;
+     f.x+=f.vx;f.y+=f.vy;f.life++;
+     if(f.type==="fall")f.vy+=.08;
+     const fh=f.type==="wave"?18:24;
+     const fw=f.type==="wave"?42:24;
+     if(rects(p,{x:f.x,y:f.y,w:fw,h:fh})){
+       boss.projectile=null;die();return;
+     }
+     if(f.life>190||f.x<cam-100)boss.projectile=null;
+   }
+
+   boss.y=325+Math.sin(performance.now()/250)*10;
+ }
+ if(p.y>590){die();return}
+ if(currentLevel<3 && rects(p,{x:goal.x-45,y:goal.y-15,w:105,h:280})){
+   levelWon=true;
+   score+=5000;
+   showMessage(
+     "LEVEL "+(currentLevel+1)+" COMPLETE!",
+     `<div style="font-size:15px;margin:8px 0">🏰 CASTLE REACHED! 🎉</div><button id="nextBtn">NEXT LEVEL ▶</button>`,
+     advance
+   );
+ }
+ // Princess touch = instant winner screen.
+ if(currentLevel===3&&princess&&!princess.rescued){
+   const hit={x:princess.x-20,y:princess.y-10,w:75,h:85};
+   if(rects(p,hit)){
+     princess.rescued=true;
+     gameFinished=true;
+     score+=10000;
+     hideMessage();
+     stopAllMusic();
+     playRewardMusic();
+     document.getElementById("winnerScreen").classList.add("show");
+     document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
+   }
+ }
+ cam+=(p.x-300-cam)*.09;cam=Math.max(0,Math.min(Math.max(0,L.length-W),cam));
+ updateHud();
+}
+function updateHud(){
+ const L=LEVELS[currentLevel]||LEVELS[0];
+ document.getElementById("score").textContent="SCORE "+String(score).padStart(6,"0");
+ document.getElementById("coins").textContent="COINS ×"+String(coinCount).padStart(2,"0");
+ document.getElementById("world").textContent="WORLD "+(currentLevel+1)+"-1 • "+L.name;
+ document.getElementById("lives").textContent="♥ "+lives;
+}
+function showMessage(title,body,action){
+ const m=document.getElementById("message");
+ m.innerHTML=`<div class="game-panel"><div class="game-title">${title}</div>${body}</div>`;
+ m.classList.add("show");
+ m.style.opacity=1;
+ m.style.pointerEvents="auto";
+
+ const b=m.querySelector("#nextBtn,#restartBtn");
+ if(b){
+   // Robust mobile + desktop click handling for dynamically-created buttons.
+   const go=(e)=>{
+     e.preventDefault();
+     e.stopPropagation();
+     if(b.dataset.clicked==="1")return;
+     b.dataset.clicked="1";
+     hideMessage();
+     action();
+     setTimeout(()=>b.dataset.clicked="",100);
+   };
+   b.addEventListener("pointerup",go,{passive:false});
+   b.addEventListener("click",go,{passive:false});
+ }
+}
+function hideMessage(){
+ const m=document.getElementById("message");
+ m.classList.remove("show");
+ m.style.opacity=0;
+ m.style.pointerEvents="none";
+ m.innerHTML="";
+}
+function advance(){
+ const next=currentLevel+1;
+
+ // Audio is optional; never let a missing audio element block level loading.
+ if(rewardMusic){
+   rewardMusic.pause();
+   rewardMusic.currentTime=0;
+ }
+
+ if(next<LEVELS.length){
+   loadLevel(next);
+   levelWon=false;
+   gameFinished=false;
+   playBackgroundMusic();
+ }else{
+   lives=3;score=0;coinCount=0;gameFinished=false;levelWon=false;
+   loadLevel(0);
+   playBackgroundMusic();
+ }
+}
+function px(x){return Math.round(x-cam)}
+function r(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(px(x),y,w,h)}
+function cloud(x,y,s=1){
+ x-=cam*.22;ctx.fillStyle="#fff";ctx.fillRect(x,y,80*s,20*s);ctx.fillRect(x+15*s,y-13*s,38*s,19*s);ctx.fillRect(x+45*s,y-8*s,35*s,18*s)
+}
+function mountain(x,base,w,h,c1,c2){
+ x-=cam*.32;ctx.fillStyle=c1;ctx.beginPath();ctx.moveTo(x,base);ctx.lineTo(x+w/2,base-h);ctx.lineTo(x+w,base);ctx.closePath();ctx.fill();
+ ctx.fillStyle=c2;ctx.beginPath();ctx.moveTo(x+w/2,base-h);ctx.lineTo(x+w*.4,base-h*.62);ctx.lineTo(x+w*.57,base-h*.55);ctx.closePath();ctx.fill()
+}
+function tree(x,y,s=1){
+ x-=cam*.55;ctx.fillStyle="#6b3e20";ctx.fillRect(x+27*s,y+50*s,18*s,65*s);
+ ctx.fillStyle="#1f6d2c";ctx.beginPath();ctx.arc(x+35*s,y+35*s,38*s,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#2d8b35";ctx.beginPath();ctx.arc(x+10*s,y+55*s,25*s,0,Math.PI*2);ctx.arc(x+62*s,y+55*s,27*s,0,Math.PI*2);ctx.fill()
+}
+function castle(x,y,s=1){
+ x-=cam*.32;ctx.fillStyle="#813b30";ctx.fillRect(x,y,260*s,210*s);ctx.fillStyle="#b95b3f";ctx.fillRect(x+20*s,y+30*s,220*s,180*s);
+ ctx.fillStyle="#19141a";ctx.fillRect(x+105*s,y+135*s,50*s,75*s);ctx.fillRect(x+45*s,y+70*s,28*s,48*s);ctx.fillRect(x+187*s,y+70*s,28*s,48*s);
+ ctx.fillStyle="#d8784b";for(let i=0;i<8;i++)ctx.fillRect(x+i*32*s,y-14*s,20*s,22*s)
+ ctx.strokeStyle="#713126";ctx.lineWidth=2;for(let yy=50;yy<190;yy+=20){ctx.beginPath();ctx.moveTo(x+20*s,y+yy);ctx.lineTo(x+240*s,y+yy);ctx.stroke()}
+}
+function drawBackground(){
+ const L=LEVELS[currentLevel];
+ if(L.theme==="outdoor"){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#46a6ff");g.addColorStop(1,"#bcecff");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#fff3a0";ctx.beginPath();ctx.arc(780-cam*.05,95,34,0,Math.PI*2);ctx.fill();
+  for(let x=-300;x<5000;x+=430)cloud(x,80+(Math.abs(x)%3)*18,.9);
+  for(let x=-500;x<5000;x+=620)mountain(x,430,620,175,"#4a9c43","#7bc65b");
+ }else if(L.theme==="lava"){
+  ctx.fillStyle="#140b16";ctx.fillRect(0,0,W,H);
+  for(let x=-100;x<5000;x+=400)mountain(x,430,400,210,"#2c2630","#4a4048");
+  ctx.fillStyle="#4b1110";ctx.fillRect(0,380,W,160);
+  for(let x=-200;x<5000;x+=180){ctx.fillStyle="#76160f";ctx.fillRect(x-cam*.15,80,70,250)}
+  ctx.fillStyle="#ff6a00";ctx.fillRect(0,420,W,120);
+  for(let x=-100;x<5000;x+=90){ctx.fillStyle="#ffb000";ctx.fillRect(x-cam*.3,412+(x%40),42,7)}
+ }else if(L.theme==="forest"){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#6ac8ff");g.addColorStop(1,"#c8f2c2");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(let x=-300;x<5000;x+=170)tree(x,300+(Math.abs(x)%50),.9);
+  for(let x=-100;x<5000;x+=240)tree(x,335+(Math.abs(x)%35),1.2);
+  ctx.fillStyle="#2e8b35";ctx.fillRect(0,390,W,40);
+ }else{
+  ctx.fillStyle="#19151b";ctx.fillRect(0,0,W,H);
+  for(let x=-100;x<5000;x+=220){ctx.fillStyle="#2b252d";ctx.fillRect(x-cam*.15,70,120,310);ctx.fillStyle="#4a3d42";ctx.fillRect(x-cam*.15+15,90,85,5)}
+  for(let x=-100;x<5000;x+=280){ctx.fillStyle="#ffbd52";ctx.fillRect(x-cam*.25,130,22,32);ctx.fillStyle="#ffe8a6";ctx.fillRect(x-cam*.25+7,138,8,16)}
+ }
+}
+function drawGround(){
+ const L=LEVELS[currentLevel];
+ for(const g of solids){
+  if(L.theme==="lava"){r(g.x,g.y,g.w,g.h,"#5a2c20");for(let x=g.x;x<g.x+g.w;x+=34){r(x,g.y,30,9,"#9e4a2c");r(x,g.y+22,20,7,"#3b211d")}}
+  else if(L.theme==="forest"){r(g.x,g.y,g.w,g.h,"#7a4a27");for(let x=g.x;x<g.x+g.w;x+=30){r(x,g.y,27,9,"#5aaa35");r(x,g.y+22,20,7,"#5b351f")}}
+  else if(L.theme==="castle"){r(g.x,g.y,g.w,g.h,"#6d6570");for(let x=g.x;x<g.x+g.w;x+=34){r(x,g.y,30,8,"#a79ca7");r(x,g.y+24,20,6,"#403a42")}}
+  else{r(g.x,g.y,g.w,g.h,"#b94820");for(let x=g.x;x<g.x+g.w;x+=32){r(x,g.y,30,8,"#ed7620");r(x,g.y+25,22,7,"#8e2d12")}}
+ }
+ if(L.theme==="lava"){
+  for(const pit of L.extra.lavaPits){ctx.fillStyle="#ff6b00";ctx.fillRect(px(pit[0]),430,pit[1]-pit[0],110);ctx.fillStyle="#ffd02b";for(let x=pit[0];x<pit[1];x+=38)ctx.fillRect(px(x),422+(x%22),25,8)}
+ }
+}
+function drawObjects(){
+ const L=LEVELS[currentLevel];
+ for(const b of blocks){
+  let c=L.theme==="castle"?"#b34c38":L.theme==="lava"?"#6d3430":L.theme==="forest"?"#8a4d26":"#b94e2d";
+  if(b.type==="?" )c="#f3a900";if(b.type==="used")c="#79604a";
+  r(b.x,b.y,b.w,b.h,c);ctx.strokeStyle="#572414";ctx.lineWidth=3;ctx.strokeRect(px(b.x)+1,b.y+1,b.w-2,b.h-2);
+  if(b.type==="power"){
+   // Distinct blue glowing mystery box.
+   const pulse=0.75+Math.sin(performance.now()/180)*0.18;
+   ctx.save();
+   ctx.shadowBlur=18;ctx.shadowColor="#159dff";
+   ctx.fillStyle=`rgba(30,145,255,${pulse})`;
+   ctx.fillRect(px(b.x),b.y,b.w,b.h);
+   ctx.restore();
+   ctx.fillStyle="#dff8ff";ctx.font="900 26px monospace";
+   ctx.fillText("★",px(b.x)+10,b.y+30);
+   ctx.strokeStyle="#aeeeff";ctx.strokeRect(px(b.x)+2,b.y+2,b.w-4,b.h-4);
+  }else if(b.type==="powerUsed"){
+   ctx.fillStyle="#315b75";ctx.fillRect(px(b.x),b.y,b.w,b.h);
+   ctx.fillStyle="#9bdfff";ctx.font="900 23px monospace";ctx.fillText("✓",px(b.x)+11,b.y+29);
+  }else if(b.type==="?"){ctx.fillStyle="#fff";ctx.font="bold 27px monospace";ctx.fillText("?",px(b.x)+13,b.y+30)}
+  else{ctx.fillStyle="#e57a42";ctx.fillRect(px(b.x)+18,b.y,5,b.h);ctx.fillRect(px(b.x),b.y+19,b.w,5)}
+ }
+ for(const q of pipes){
+  const color=L.theme==="lava"?"#c73522":L.theme==="forest"?"#3a9c36":"#36ae28";
+  r(q.x-7,q.y,84,18,color);r(q.x,q.y+15,70,65,color);ctx.strokeStyle="#194d20";ctx.strokeRect(px(q.x),q.y+15,70,65)
+ }
+ for(const c of coins)if(!c.taken){const yy=c.y+Math.sin(performance.now()/180+c.bob)*3;ctx.fillStyle="#ffd52e";ctx.beginPath();ctx.ellipse(px(c.x),yy,9,13,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#b77800";ctx.stroke()}
+ for(const e of enemies)if(!e.dead)drawEnemy(e,L.theme);
+ if(L.theme==="castle"){castle(4590,205,1.55)}
+  else if(currentLevel<3){castle(goal.x-300,235,0.82)}
+ if(currentLevel<3){
+  ctx.save();ctx.shadowBlur=8;ctx.shadowColor="#fff";
+  r(goal.x,goal.y,8,250,"#f4f4f4");ctx.restore();
+  ctx.fillStyle="#fff";ctx.beginPath();
+  ctx.moveTo(px(goal.x+8),goal.y+8);ctx.lineTo(px(goal.x+65),goal.y+28);
+  ctx.lineTo(px(goal.x+8),goal.y+48);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#ffd83d";ctx.font="900 13px monospace";
+  ctx.fillText("FINISH",px(goal.x-22),goal.y-14);
+ }else{
+  drawBoss();drawPrincess();
+ }
+}
+function drawEnemy(e,theme){
+ const body=theme==="lava"?"#d45b32":theme==="forest"?"#5c7c2b":theme==="castle"?"#704a65":"#a8482c";
+ r(e.x,e.y,e.w,e.h,body);r(e.x+4,e.y+5,24,18,"#542c27");r(e.x+4,e.y+24,9,8,"#382018");r(e.x+19,e.y+24,9,8,"#382018");
+ ctx.fillStyle="#fff";ctx.fillRect(px(e.x+7),e.y+10,5,5);ctx.fillRect(px(e.x+20),e.y+10,5,5)
+}
+function drawBoss(){
+ if(!boss)return;
+ if(boss.active){
+  const x=px(boss.x),y=boss.y;
+
+  // Large armored dragon body.
+  ctx.fillStyle="#641a1d";ctx.fillRect(x+10,y+30,78,58);
+  ctx.fillStyle="#a62b25";ctx.fillRect(x+25,y+12,55,68);
+  ctx.fillStyle="#d3442e";ctx.fillRect(x+42,y+2,43,52);
+
+  // Huge wings.
+  ctx.fillStyle="#4b1219";
+  ctx.beginPath();ctx.moveTo(x+30,y+35);ctx.lineTo(x-38,y-15);ctx.lineTo(x-15,y+55);ctx.lineTo(x+32,y+65);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(x+75,y+34);ctx.lineTo(x+128,y-18);ctx.lineTo(x+112,y+62);ctx.lineTo(x+72,y+66);ctx.closePath();ctx.fill();
+
+  // Horns and crown-like spikes.
+  ctx.fillStyle="#f0b53a";
+  ctx.beginPath();ctx.moveTo(x+42,y+8);ctx.lineTo(x+31,y-16);ctx.lineTo(x+52,y+2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(x+73,y+6);ctx.lineTo(x+90,y-18);ctx.lineTo(x+84,y+14);ctx.fill();
+  ctx.fillRect(x+47,y-8,7,16);ctx.fillRect(x+68,y-10,7,18);
+
+  // Snout, eyes and teeth.
+  ctx.fillStyle="#ef693c";ctx.fillRect(x+68,y+25,35,25);
+  ctx.fillStyle="#ffe65a";ctx.fillRect(x+78,y+25,7,7);ctx.fillRect(x+92,y+25,7,7);
+  ctx.fillStyle="#fff";ctx.fillRect(x+75,y+45,6,9);ctx.fillRect(x+88,y+45,6,9);
+  ctx.fillStyle="#111";ctx.fillRect(x+80,y+26,3,3);ctx.fillRect(x+94,y+26,3,3);
+
+  // Fire glow in mouth.
+  ctx.fillStyle="#ffb000";ctx.fillRect(x+98,y+38,20,9);
+  ctx.fillStyle="#ff4b00";ctx.beginPath();ctx.moveTo(x+115,y+36);ctx.lineTo(x+145,y+43);ctx.lineTo(x+115,y+50);ctx.closePath();ctx.fill();
+
+  // Armor scales.
+  ctx.fillStyle="#e45b36";
+  for(let i=0;i<4;i++)ctx.fillRect(x+20+i*16,y+58,10,10);
+
+  ctx.fillStyle="#2b1010";ctx.fillRect(x+18,y+82,23,10);ctx.fillRect(x+64,y+82,23,10);
+
+  // Boss name + health.
+  ctx.fillStyle="#fff";ctx.font="900 15px monospace";ctx.fillText("🔥 DRAGON BOSS",x-15,y-30);
+  ctx.fillStyle="#111";ctx.fillRect(x-10,y-20,105,9);
+  for(let i=0;i<boss.hp;i++){ctx.fillStyle="#ff4038";ctx.fillRect(x-8+i*17,y-18,14,5)}
+
+  // Attack projectile visuals.
+  if(boss.projectile){
+    const f=boss.projectile;
+    if(f.type==="wave"){
+      ctx.fillStyle="#ff4a00";ctx.fillRect(px(f.x),f.y,42,18);
+      ctx.fillStyle="#ffd21f";ctx.fillRect(px(f.x)+8,f.y-6,24,6);
+    }else{
+      ctx.fillStyle="#ffb000";ctx.beginPath();ctx.arc(px(f.x),f.y,13,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle="#ff3d00";ctx.beginPath();ctx.arc(px(f.x),f.y,7,0,Math.PI*2);ctx.fill();
+    }
+  }
+ }
+}
+function drawPrincess(){
+ if(!princess)return;
+ const x=px(princess.x),y=princess.y;
+ ctx.fillStyle="#ffd2a3";ctx.fillRect(x+10,y,14,14);
+ ctx.fillStyle="#f4d34e";ctx.fillRect(x+7,y-5,20,7);
+ ctx.fillStyle="#e889bd";ctx.fillRect(x+5,y+14,24,30);
+ ctx.fillStyle="#b95a9b";ctx.fillRect(x+2,y+42,30,8);
+ ctx.fillStyle="#fff";ctx.fillRect(x+11,y+7,3,3);ctx.fillRect(x+20,y+7,3,3);
+ if(!princess.rescued){ctx.fillStyle="#fff";ctx.font="bold 14px monospace";ctx.fillText("PRINCESS",x-25,y-14)}
+}
+function drawPlayer(){
+ const x=px(p.x),y=p.y;
+ // Original blocky retro hero sprite.
+ ctx.fillStyle="#e52b26";ctx.fillRect(x+5,y,21,10);ctx.fillRect(x+1,y+6,28,7);
+ ctx.fillStyle="#f4b183";ctx.fillRect(x+7,y+13,19,13);ctx.fillStyle="#713c25";ctx.fillRect(x+20,y+15,7,5);
+ ctx.fillStyle="#e52b26";ctx.fillRect(x+4,y+25,23,9);ctx.fillStyle="#2455a4";ctx.fillRect(x+5,y+31,21,8);
+ ctx.fillStyle="#6b3c22";ctx.fillRect(x+1,y+38,12,4);ctx.fillRect(x+19,y+38,12,4);ctx.fillStyle="#ffd0a0";ctx.fillRect(x+1,y+25,6,8);
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ drawBackground();drawGround();drawObjects();drawPlayer();
+
+ if(blueShot){
+   const sx=px(blueShot.x), sy=blueShot.y;
+   ctx.save();
+   ctx.shadowBlur=24;
+   ctx.shadowColor="#00aaff";
+   const g=ctx.createRadialGradient(sx+14,sy+10,2,sx+14,sy+10,28);
+   g.addColorStop(0,"#ffffff");
+   g.addColorStop(.28,"#75e8ff");
+   g.addColorStop(1,"rgba(0,105,255,0)");
+   ctx.fillStyle=g;
+   ctx.beginPath();ctx.arc(sx+14,sy+10,28,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle="#2ca9ff";
+   ctx.beginPath();ctx.arc(sx+14,sy+10,10,0,Math.PI*2);ctx.fill();
+   ctx.restore();
+ }
+
+ if(deathAnim){
+   ctx.fillStyle="rgba(0,0,0,.38)";ctx.fillRect(0,0,W,H);
+   ctx.textAlign="center";
+   ctx.font="900 42px Impact,Arial Black,sans-serif";
+   ctx.fillStyle="#fff";ctx.strokeStyle="#8b1111";ctx.lineWidth=5;
+   ctx.strokeText(lives>0?"YOU DIED!":"GAME OVER!",W/2,105);
+   ctx.fillText(lives>0?"YOU DIED!":"GAME OVER!",W/2,105);
+   ctx.font="900 15px monospace";ctx.fillStyle="#ffd83d";
+   ctx.fillText(lives>0?"PRESS THE BUTTON TO GET READY":"ALL 3 HEARTS ARE GONE",W/2,135);
+
+   // Manual button — no automatic restart.
+   const bw=210,bh=52,bx=W/2-bw/2,by=165;
+   ctx.fillStyle="#fff";ctx.fillRect(bx-3,by-3,bw+6,bh+6);
+   ctx.fillStyle=lives>0?"#e99a08":"#c52b2b";ctx.fillRect(bx,by,bw,bh);
+   ctx.fillStyle="#fff";ctx.font="900 18px monospace";
+   ctx.fillText(lives>0?"▶  GET READY":"↻  RESTART GAME",W/2,by+33);
+   ctx.textAlign="left";
+ }
+}
+
+// Manual death-screen button.
+// Tap/click only: nothing restarts automatically.
+canvas.addEventListener("pointerdown", (e)=>{
+ if(!deathAnim || deathTimer>0) return;
+ const rect=canvas.getBoundingClientRect();
+ const x=(e.clientX-rect.left)*(W/rect.width);
+ const y=(e.clientY-rect.top)*(H/rect.height);
+ const bx=W/2-105,by=165,bw=210,bh=52;
+ if(x>=bx&&x<=bx+bw&&y>=by&&y<=by+bh){
+   if(lives>0){
+     // Retry current level with the remaining hearts.
+     deathAnim=false;
+     deathTimer=0;
+     loadLevel(currentLevel);
+   }else{
+     // All 3 hearts used: reset the entire game AND restore Level-3 power.
+      lives=3;
+      score=0;
+      coinCount=0;
+      currentLevel=0;
+      deathAnim=false;
+      deathTimer=0;
+      gameFinished=false;
+      levelWon=false;
+      powerReady=false;
+      powerCollected=false;
+      blueShot=null;
+      powerBoxLevel=2;
+      const powerSpots=[690,1570,2470,3400];
+      powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
+      loadLevel(0);
+      updatePowerUI();
+      playBackgroundMusic();
+   }
+ }
+});
+
+
+/* Winner -> Menu. Next START GAME is a completely fresh run. */
+document.getElementById("winnerAgain").addEventListener("click",()=>{
+  document.getElementById("winnerScreen").classList.remove("show");
+  stopAllMusic();
+  gameStarted=false; gameFinished=false; levelWon=false;
+  currentLevel=0; score=0; coinCount=0; lives=3;
+  powerReady=false; powerCollected=false; blueShot=null; powerBoxLevel=2;
+  const powerSpots=[690,1570,2470,3400];
+  powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
+  loadLevel(0); updateHud();
+  playBackgroundMusic();
+  const menu=document.getElementById("startMenu");
+  menu.style.opacity="1"; menu.style.pointerEvents="auto";
+});
+
+function loop(){update();draw();requestAnimationFrame(loop)}
+function start(){
+ gameStarted=true;score=0;coinCount=0;lives=3;powerReady=false;powerFlash=0;powerCollected=false;blueShot=null;
+powerBoxLevel=2;
+const powerSpots=[690,1570,2470,3400];
+powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
+loadLevel(0);
+ const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
+ playBackgroundMusic();
+}
+document.getElementById("startGameBtn").onclick=start;
+document.addEventListener("keydown",e=>{if(!gameStarted&&(e.code==="Enter"||e.code==="Space"))start()});
+
+loadLevel(0);
+loop();
+
+
+const rewardImage = document.getElementById("rewardImage");
+const rewardPlaceholder = document.getElementById("rewardPlaceholder");
+rewardImage.addEventListener("load",()=>{
+  rewardImage.style.display="block";
+  rewardPlaceholder.style.display="none";
+});
+
+</script>
+</body>
+</html>

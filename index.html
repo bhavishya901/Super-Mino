@@ -305,6 +305,124 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 }
 @media(min-width:800px){#powerDesktop{display:block}}
 
+
+
+/* REWARD BOX SIZE FIX — CSS ONLY
+   IMPORTANT: game/restart JavaScript is intentionally untouched. */
+#winnerScreen{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+  overflow:auto;
+}
+#winnerScreen.show{display:flex}
+
+.winner-card{
+  width:min(92vw,520px);
+  max-height:92vh;
+  overflow:auto;
+  padding:20px 22px 18px;
+}
+
+.reward-box{
+  width:min(62vw,260px);
+  min-height:0;
+  padding:7px;
+  margin:0 auto 10px;
+}
+
+#rewardImage{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:1103 / 1467;
+  max-height:260px;
+  object-fit:contain;
+  margin:0 auto;
+}
+
+.reward-placeholder{
+  width:100%;
+  min-height:180px;
+  height:auto;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+@media (max-width:520px){
+  .winner-card{
+    width:min(88vw,390px);
+    padding:14px 14px 14px;
+  }
+  .reward-box{
+    width:min(58vw,220px);
+    padding:6px;
+  }
+  #rewardImage{
+    max-height:235px;
+  }
+  .reward-placeholder{
+    min-height:170px;
+    font-size:10px;
+  }
+}
+
+@media (orientation:landscape) and (max-height:600px){
+  #winnerScreen{
+    padding:8px;
+    overflow:auto;
+  }
+  .winner-card{
+    width:min(88vw,820px);
+    max-height:96vh;
+    overflow:auto;
+  }
+  .reward-box{
+    width:min(36vw,280px);
+  }
+  #rewardImage{
+    max-height:180px;
+  }
+}
+
+
+/* REWARD PHOTO FRAME — 1103 × 1467 PORTRAIT */
+.reward-box{
+  width:min(58vw,250px) !important;
+  min-height:0 !important;
+  padding:8px !important;
+  border:3px solid #ffd83d !important;
+  border-radius:16px !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,216,61,.06)) !important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.18) inset,0 10px 30px rgba(0,0,0,.35),0 0 22px rgba(255,216,61,.18) !important;
+}
+#rewardImage{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:1103 / 1467 !important;
+  max-height:270px !important;
+  object-fit:contain !important;
+  margin:0 auto !important;
+  border-radius:9px !important;
+  border:2px solid rgba(255,255,255,.7) !important;
+  box-shadow:0 3px 12px rgba(0,0,0,.35) !important;
+}
+@media(max-width:520px){
+  .reward-box{width:min(56vw,210px) !important;padding:7px !important}
+  #rewardImage{max-height:245px !important}
+}
+@media(orientation:landscape) and (max-height:600px){
+  .reward-box{width:min(30vw,230px) !important}
+  #rewardImage{max-height:185px !important}
+}
+
 </style>
 </head>
 <body>
@@ -326,11 +444,11 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
     <div class="reward-box">
       <div class="reward-label">🎁 YOUR REWARD / REDEEM CODE</div>
       <!-- Replace reward.png with your own redeem-code PNG -->
-      <img id="rewardImage" src="reward/supermino.jpg" alt="Reward / Redeem Code">
+      <img id="rewardImage" src="supermino.jpg" alt="Reward / Redeem Code"
            onerror="this.style.display='none';document.getElementById('rewardPlaceholder').style.display='flex';">
       <div id="rewardPlaceholder" class="reward-placeholder">
         YOUR REWARD IMAGE GOES HERE<br>
-        <small>Put <b>reward.png</b> inside the <b>reward</b> folder</small>
+        <small>Keep <b>supermino.jpg</b> in the same folder as <b>index.html</b></small>
       </div>
     </div>
 

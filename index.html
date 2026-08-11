@@ -161,8 +161,8 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 </head>
 <body>
 <audio id="bgMusic" loop preload="auto"></audio>
-<audio id="deathMusic" loop preload="auto"></audio>
-<audio id="rewardMusic" loop preload="auto"></audio>
+<audio id="deathMusic" preload="auto"></audio>
+<audio id="rewardMusic" preload="auto"></audio>
 
 <div id="startMenu">
   <div class="start-cloud one"></div><div class="start-cloud two"></div>
@@ -428,6 +428,8 @@ function die(){
  keys.left=keys.right=keys.jump=false;
  p.vx=0;p.vy=-10;p.onGround=false;
  lives--;
+  bgMusic.pause();
+  try{bgMusic.currentTime=0}catch(_){}
   playDeathMusic();
 }
 function update(){
@@ -563,6 +565,8 @@ function update(){
      gameFinished=true;
      score+=10000;
      hideMessage();
+     stopAllMusic();
+     playRewardMusic();
      document.getElementById("winnerScreen").classList.add("show");
      document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
    }
@@ -907,6 +911,7 @@ const powerSpots=[690,1570,2470,3400];
 powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
 loadLevel(0);
  const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
+ playBackgroundMusic();
 }
 document.getElementById("startGameBtn").onclick=start;
 document.addEventListener("keydown",e=>{if(!gameStarted&&(e.code==="Enter"||e.code==="Space"))start()});
@@ -944,7 +949,6 @@ skipLevelBtn.addEventListener("click",()=>{
 });
 
 loadLevel(0);
-playMusic(bgMusic);
 loop();
 
 

@@ -180,7 +180,7 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
     <div class="winner-left">
       <button id="winnerAgain" type="button">↩ BACK TO MENU</button>
       <div id="winnerScore">FINAL SCORE 000000</div>
-      <div class="winner-note">YAH AAPKA RECORD HAI<br>YOUR FINAL SCORE &amp; REWARD</div>
+      <div class="winner-note"><br>YOUR FINAL SCORE &amp; REWARD</div>
     </div>
 
     <div class="reward-box">
@@ -325,7 +325,7 @@ function makeLevel(name,theme,length,platforms,obstacleBlocks,pipeData,coinData,
 const P=(x,y,w,h)=>({x,y,w,h});
 const B=(x,y,type="?")=>({x,y,w:42,h:42,type});
 const C=(x,y)=>({x,y,taken:false,bob:Math.random()*6});
-const E=(x,vx=-.8)=>({x,y:398,w:32,h:32,vx,dead:false});
+const E=(x,vx=-2.5)=>({x,y:398,w:32,h:32,vx,dead:false});
 const Q=(x,y,w=70,h=80)=>({x,y,w,h});
 
 LEVELS.push(makeLevel(

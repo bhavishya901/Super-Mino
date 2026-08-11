@@ -63,22 +63,6 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 .start-credit{position:absolute;z-index:3;bottom:12px;left:0;right:0;font:900 12px monospace;letter-spacing:2px;color:#fff;text-shadow:2px 2px #2572b7}
 @media(min-width:800px){#touch{display:none}}
 
-#skipLevelBtn{
-  position:absolute;
-  right:16px;
-  top:48px;
-  z-index:15;
-  border:3px solid #fff;
-  border-radius:9px;
-  padding:8px 12px;
-  color:#fff;
-  background:linear-gradient(#7d5cff,#4c2bb8);
-  box-shadow:0 4px 0 #2b176c;
-  font:900 12px monospace;
-  cursor:pointer;
-  text-shadow:2px 2px #2b176c;
-}
-#skipLevelBtn:active{transform:translateY(4px);box-shadow:0 0 0 #2b176c}
 /* ===== POWER BUTTON ===== */
 #powerDesktop{
   position:absolute;
@@ -167,7 +151,7 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 <div id="startMenu">
   <div class="start-cloud one"></div><div class="start-cloud two"></div>
   <div class="start-logo">Super Mino</div>
-  <div class="start-subtitle">GAME COMPLETE HONE PAR AAPKO EK REWARD DIYA JAEGA 🎁</div>
+  <div class="start-subtitle">WIN THE GAME AND GET A REDEEM CODE🎁</div>
   <button id="startGameBtn">▶ START GAME</button>
   <div class="start-credit">MADE BY BHAVISHYA</div>
 </div>
@@ -180,7 +164,7 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
     <div class="winner-left">
       <button id="winnerAgain" type="button">↩ BACK TO MENU</button>
       <div id="winnerScore">FINAL SCORE 000000</div>
-      <div class="winner-note"><br>YOUR FINAL SCORE &amp; REWARD</div>
+      <div class="winner-note"><br>Yah le tara  &amp; REWARD</div>
     </div>
 
     <div class="reward-box">
@@ -197,7 +181,6 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 
 <div id="wrap">
 <canvas id="game"></canvas>
-<button id="skipLevelBtn" type="button">⏭ SKIP LEVEL</button>
 <div id="hud">
   <span id="score">SCORE 000000</span><span id="coins">COINS ×00</span><span id="world">WORLD 1-1</span><span id="lives">♥ 3</span>
 </div>
@@ -446,7 +429,15 @@ function update(){
    updateHud();
    return;
  }
- const L=LEVELS[currentLevel],accel=.58,max=5.4;
+ const L=LEVELS[currentLevel];
+  // Movement tuned per level.
+  const movement=[
+    {accel:.56,max:5.2},
+    {accel:.59,max:5.5},
+    {accel:.62,max:5.8},
+    {accel:.68,max:6.4}
+  ][currentLevel]||{accel:.58,max:5.4};
+  const {accel,max}=movement;
  if(keys.left){p.vx-=accel;p.face=-1}
  if(keys.right){p.vx+=accel;p.face=1}
  if(!keys.left&&!keys.right)p.vx*=.78;
@@ -892,7 +883,7 @@ document.getElementById("winnerAgain").addEventListener("click",()=>{
   document.getElementById("winnerScreen").classList.remove("show");
   stopAllMusic();
   gameStarted=false; gameFinished=false; levelWon=false;
-  currentLevel=0; skipCount=0; score=0; coinCount=0; lives=3;
+  currentLevel=0; score=0; coinCount=0; lives=3;
   powerReady=false; powerCollected=false; blueShot=null; powerBoxLevel=2;
   const powerSpots=[690,1570,2470,3400];
   powerBoxX=powerSpots[Math.floor(Math.random()*powerSpots.length)];
@@ -904,7 +895,6 @@ document.getElementById("winnerAgain").addEventListener("click",()=>{
 
 function loop(){update();draw();requestAnimationFrame(loop)}
 function start(){
- skipCount=0;
  gameStarted=true;score=0;coinCount=0;lives=3;powerReady=false;powerFlash=0;powerCollected=false;blueShot=null;
 powerBoxLevel=2;
 const powerSpots=[690,1570,2470,3400];
@@ -915,38 +905,6 @@ loadLevel(0);
 }
 document.getElementById("startGameBtn").onclick=start;
 document.addEventListener("keydown",e=>{if(!gameStarted&&(e.code==="Enter"||e.code==="Space"))start()});
-
-// LEVEL SKIP: 4 presses complete the game.
-let skipCount=0;
-const skipLevelBtn=document.getElementById("skipLevelBtn");
-
-skipLevelBtn.addEventListener("click",()=>{
-  if(!gameStarted||gameFinished)return;
-  skipCount++;
-
-  if(skipCount<4){
-    loadLevel(skipCount);
-    levelWon=false;
-    gameFinished=false;
-    hideMessage();
-    playBackgroundMusic();
-    return;
-  }
-
-  // Fourth press = instant winner.
-  currentLevel=3;
-  gameFinished=true;
-  levelWon=false;
-  score+=10000;
-  if(princess) princess.rescued=true;
-  hideMessage();
-  stopAllMusic();
-  playRewardMusic();
-
-  document.getElementById("winnerScreen").classList.add("show");
-  document.getElementById("winnerScore").textContent=
-    "FINAL SCORE "+String(score).padStart(6,"0");
-});
 
 loadLevel(0);
 loop();

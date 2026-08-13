@@ -218,7 +218,7 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 const canvas=document.getElementById("game"),ctx=canvas.getContext("2d",{alpha:false,desynchronized:true});
 ctx.imageSmoothingEnabled=false;
 const W=960,H=540;
-let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false,levelSkipCount=0;
+let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false;
 const keys={left:false,right:false,jump:false},LEVELS=[];
 let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},boss=null,princess=null,deathAnim=false,deathTimer=0,powerReady=false,powerFlash=0,powerCollectedByLevel={2:false,3:false},birds=[];
 const bgMusic=document.getElementById("bgMusic");
@@ -959,8 +959,8 @@ canvas.addEventListener("pointerdown", (e)=>{
       lives=3;
       score=0;
       coinCount=0;
-      levelSkipCount=0;
-      skipLevelBtn.textContent="⏭ SKIP LEVEL 0/5";
+      
+      
       currentLevel=0;
       deathAnim=false;
       deathTimer=0;
@@ -982,8 +982,8 @@ document.getElementById("winnerAgain").addEventListener("click",()=>{
   document.getElementById("winnerScreen").classList.remove("show");
   stopAllMusic();
   gameStarted=false; gameFinished=false; levelWon=false;
-  currentLevel=0; score=0; coinCount=0; lives=3; levelSkipCount=0;
-  skipLevelBtn.textContent="⏭ SKIP LEVEL 0/5";
+  currentLevel=0; score=0; coinCount=0; lives=3; 
+  
   powerReady=false; powerCollectedByLevel={2:false,3:false}; blueShot=null;
   loadLevel(0); updateHud();
   playBackgroundMusic();
@@ -998,7 +998,7 @@ function loop(){
   requestAnimationFrame(loop)
 }
 function start(){
- gameStarted=true;score=0;coinCount=0;lives=3;levelSkipCount=0;skipLevelBtn.textContent="⏭ SKIP LEVEL 0/5";powerReady=false;powerFlash=0;powerCollectedByLevel={2:false,3:false};blueShot=null;
+ gameStarted=true;score=0;coinCount=0;lives=3;powerReady=false;powerFlash=0;powerCollectedByLevel={2:false,3:false};blueShot=null;
 loadLevel(0);
  const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
  playBackgroundMusic();

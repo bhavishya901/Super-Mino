@@ -80,8 +80,26 @@ background:linear-gradient(180deg,#48a9ff,#78c8ff 58%,#bcecff);color:#fff;text-a
   pointer-events:none;
 }
 .start-subtitle{position:relative;z-index:2;font:900 clamp(11px,1.8vw,17px) monospace;letter-spacing:1.5px;line-height:1.5;color:#fff;text-shadow:2px 2px #2572b7;margin:10px 0 20px;max-width:min(80vw,620px)}
-#startGameBtn{position:relative;z-index:2;border:3px solid #fff;border-radius:10px;padding:11px 30px;min-width:180px;color:#fff;
+#startGameBtn{position:relative;z-index:2;border:3px solid #fff;border-radius:10px;padding:9px 24px;min-width:150px;color:#fff;
 background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18px #0004;font:900 15px monospace;cursor:pointer;text-shadow:2px 2px #8a4b00}
+.start-actions{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:9px}
+#ownerKeyBtn,#skipLevelBtn{border:3px solid #fff;border-radius:10px;padding:8px 20px;min-width:150px;color:#fff;background:linear-gradient(#6578ff,#3449b8);box-shadow:0 4px 0 #202d78,0 8px 18px #0004;font:900 13px monospace;cursor:pointer;text-shadow:2px 2px #202d78}
+#ownerKeyBtn:active,#skipLevelBtn:active{transform:translateY(4px);box-shadow:0 0 0 #202d78}
+#skipLevelBtn{position:absolute;right:18px;top:92px;z-index:16;display:none;background:linear-gradient(#ffcf32,#e58d00);box-shadow:0 4px 0 #9a5000;text-shadow:2px 2px #8a4b00}
+#skipLevelBtn.enabled{display:block}
+#ownerKeyModal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:20px}
+#ownerKeyModal.show{display:flex}
+.owner-key-card{width:min(340px,90vw);padding:24px 20px;border:4px solid #fff;border-radius:16px;background:linear-gradient(#347edb,#17488e);box-shadow:0 8px 0 #091d49,0 20px 45px #0009;text-align:center;color:#fff}
+.owner-key-card h2{font:900 25px Impact,"Arial Black",sans-serif;margin-bottom:8px;color:#ffd83d;text-shadow:3px 3px #351900}
+.owner-key-card p{font:700 11px monospace;margin-bottom:13px}
+#ownerKeyInput{width:150px;padding:10px;border:3px solid #fff;border-radius:9px;text-align:center;font:900 22px monospace;letter-spacing:5px;outline:none}
+.owner-key-actions{display:flex;justify-content:center;gap:8px;margin-top:13px}
+.owner-key-actions button{border:3px solid #fff;border-radius:9px;padding:8px 14px;color:#fff;font:900 12px monospace;cursor:pointer}
+#ownerKeySubmit{background:#2aaa48;box-shadow:0 4px 0 #176327}
+#ownerKeyCancel{background:#c83b3b;box-shadow:0 4px 0 #712020}
+#ownerKeyStatus{min-height:18px;margin-top:10px;font:900 11px monospace}
+#ownerKeyStatus.bad{color:#ff9a9a}
+#ownerKeyStatus.good{color:#9cffaa}
 .start-credit{position:absolute;z-index:3;bottom:12px;left:0;right:0;font:900 12px monospace;letter-spacing:2px;color:#fff;text-shadow:2px 2px #2572b7}
 @media(min-width:800px){#touch{display:none}}
 
@@ -115,6 +133,9 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 #powerDesktop.active{opacity:1}
 #powerDesktop:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 #06316d}
 @keyframes powerPulse{from{filter:brightness(1)}to{filter:brightness(1.25)}}
+#heartToast{position:absolute;left:50%;top:28%;z-index:25;pointer-events:none;opacity:0;color:#fff;text-align:center;font:900 clamp(12px,2.5vw,21px) monospace;text-shadow:2px 2px #700,0 0 10px #f22;white-space:nowrap}
+#heartToast.show{animation:heartToast 2.5s ease-out forwards}
+@keyframes heartToast{0%{opacity:0;transform:translate(-50%,12px) scale(.7)}15%{opacity:1;transform:translate(-50%,0) scale(1.05)}70%{opacity:1;transform:translate(-50%,-35px) scale(1)}100%{opacity:0;transform:translate(-50%,-70px) scale(.9)}}
 @media(min-width:800px){#powerDesktop{font-size:13px;padding:9px 14px}}
 
 
@@ -175,7 +196,23 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
   <div class="start-logo">Super Mino</div>
   <div class="start-subtitle">WIN THE GAME AND GET A REDEEM CODE🎁</div>
   <button id="startGameBtn">▶ START GAME</button>
+  <div class="start-actions">
+    <button id="ownerKeyBtn" type="button">🔑 OWNER KEY</button>
+  </div>
   <div class="start-credit">MADE BY BHAVISHYA</div>
+</div>
+
+<div id="ownerKeyModal">
+  <div class="owner-key-card">
+    <h2>OWNER KEY</h2>
+    <p>ENTER 4-DIGIT OWNER KEY</p>
+    <input id="ownerKeyInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Owner key">
+    <div class="owner-key-actions">
+      <button id="ownerKeySubmit" type="button">UNLOCK</button>
+      <button id="ownerKeyCancel" type="button">CANCEL</button>
+    </div>
+    <div id="ownerKeyStatus"></div>
+  </div>
 </div>
 
 
@@ -206,8 +243,9 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 <div id="hud">
   <span id="score">SCORE 000000</span><span id="coins">COINS ×00</span><span id="world">WORLD 1-1</span><span id="lives">♥ 3</span>
 </div>
-<div id="message"></div>
+<div id="message"></div><div id="heartToast"></div>
 <button id="powerDesktop">⚡ SHOOT</button>
+<button id="skipLevelBtn" type="button">⏭ SKIP LEVEL</button>
 <div id="touch">
   <div class="pad"><button class="btn" id="left">◀</button><button class="btn" id="right">▶</button></div>
   <div class="pad"><button class="btn" id="jump">A</button></div>
@@ -218,9 +256,9 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 const canvas=document.getElementById("game"),ctx=canvas.getContext("2d",{alpha:false,desynchronized:true});
 ctx.imageSmoothingEnabled=false;
 const W=960,H=540;
-let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false;
+let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false,ownerUnlocked=false,skipClicks=0;
 const keys={left:false,right:false,jump:false},LEVELS=[];
-let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},boss=null,princess=null,deathAnim=false,deathTimer=0,powerReady=false,powerFlash=0,powerCollectedByLevel={2:false,3:false},birds=[];
+let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},boss=null,princess=null,deathAnim=false,deathTimer=0,powerReady=false,powerFlash=0,powerCollectedByLevel={2:false,3:false},heartCollectedByLevel={1:false,3:false},hearts=[],heartToastTimer=0,birds=[];
 const bgMusic=document.getElementById("bgMusic");
 const deathMusic=document.getElementById("deathMusic");
 const rewardMusic=document.getElementById("rewardMusic");
@@ -420,6 +458,10 @@ function loadLevel(i){
  }
  pipes=L.pipes.map(o=>({...o}));
  coins=L.coins.map(o=>({...o,taken:false}));
+ const heartSpots={1:{x:983,y:250},3:{x:411,y:295}};
+ hearts=(!heartCollectedByLevel[i]&&heartSpots[i])
+   ? [{...heartSpots[i],taken:false,bob:Math.random()*6}]
+   : [];
  enemies=L.enemies.map(o=>({...o,dead:false}));
  birds=[];
  const birdSpots={0:[1350,2500,3320],1:[1100,2040,3180],2:[1200,2380,3310],3:[1050,2090,3050],4:[1250,2300,3300]};
@@ -507,6 +549,9 @@ function update(){
    }
  }
  for(const c of coins)if(!c.taken&&rects(p,{x:c.x-10,y:c.y-10,w:20,h:20})){c.taken=true;coinCount++;score+=200}
+ for(const h of hearts)if(!h.taken&&rects(p,{x:h.x-13,y:h.y-13,w:26,h:26})){
+   h.taken=true;heartCollectedByLevel[currentLevel]=true;lives++;score+=500;showHeartShayari();
+ }
 
  // Air birds: stomp to kill; side contact hurts.
  for(const b of birds){
@@ -628,6 +673,12 @@ function update(){
  }
  cam+=(p.x-300-cam)*.09;cam=Math.max(0,Math.min(Math.max(0,L.length-W),cam));
  updateHud();
+}
+function showHeartShayari(){
+ const toast=document.getElementById("heartToast");if(!toast)return;
+ toast.innerHTML='❤️ +1 HEART<br><span style="font-size:.72em">"Dil mila, jaan bachi…<br>ab jeet ki baari hai! ❤️"</span>';
+ toast.classList.remove("show");void toast.offsetWidth;toast.classList.add("show");
+ clearTimeout(heartToastTimer);heartToastTimer=setTimeout(()=>toast.classList.remove("show"),2600);
 }
 function updateHud(){
  const L=LEVELS[currentLevel]||LEVELS[0];
@@ -791,6 +842,12 @@ function drawObjects(){
   r(q.x-7,q.y,84,18,color);r(q.x,q.y+15,70,65,color);ctx.strokeStyle="#194d20";ctx.strokeRect(px(q.x),q.y+15,70,65)
  }
  for(const c of coins)if(!c.taken){const yy=c.y+Math.sin(performance.now()/180+c.bob)*3;ctx.fillStyle="#ffd52e";ctx.beginPath();ctx.ellipse(px(c.x),yy,9,13,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#b77800";ctx.stroke()}
+ for(const h of hearts)if(!h.taken){
+   const x=px(h.x),y=h.y+Math.sin(performance.now()/180+h.bob)*3;
+   ctx.save();ctx.translate(x,y);ctx.scale(.55,.55);ctx.shadowBlur=9;ctx.shadowColor="#ff1735";ctx.fillStyle="#ff1735";
+   ctx.beginPath();ctx.moveTo(0,10);ctx.bezierCurveTo(-18,-2,-15,-16,-6,-16);ctx.bezierCurveTo(-1,-16,0,-11,0,-8);ctx.bezierCurveTo(0,-11,1,-16,6,-16);ctx.bezierCurveTo(15,-16,18,-2,0,10);ctx.fill();
+   ctx.fillStyle="#ff9aa5";ctx.fillRect(-8,-10,5,3);ctx.restore();
+ }
 
  // Airborne birds.
  for(const b of birds){
@@ -984,7 +1041,7 @@ document.getElementById("winnerAgain").addEventListener("click",()=>{
   gameStarted=false; gameFinished=false; levelWon=false;
   currentLevel=0; score=0; coinCount=0; lives=3; 
   
-  powerReady=false; powerCollectedByLevel={2:false,3:false}; blueShot=null;
+  powerReady=false; powerCollectedByLevel={2:false,3:false}; blueShot=null; ownerUnlocked=false; skipClicks=0; document.getElementById("skipLevelBtn").classList.remove("enabled");
   loadLevel(0); updateHud();
   playBackgroundMusic();
   const menu=document.getElementById("startMenu");
@@ -998,12 +1055,74 @@ function loop(){
   requestAnimationFrame(loop)
 }
 function start(){
- gameStarted=true;score=0;coinCount=0;lives=3;powerReady=false;powerFlash=0;powerCollectedByLevel={2:false,3:false};blueShot=null;
-loadLevel(0);
+ gameStarted=true;score=0;coinCount=0;lives=3;heartCollectedByLevel={1:false,3:false};hearts=[];powerReady=false;powerFlash=0;powerCollectedByLevel={2:false,3:false};blueShot=null;
+ loadLevel(0);
  const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
+ document.getElementById("skipLevelBtn").classList.toggle("enabled",ownerUnlocked);
  playBackgroundMusic();
 }
-document.getElementById("startGameBtn").onclick=start;
+
+const ownerKeyModal=document.getElementById("ownerKeyModal");
+const ownerKeyInput=document.getElementById("ownerKeyInput");
+const ownerKeyStatus=document.getElementById("ownerKeyStatus");
+const skipLevelBtn=document.getElementById("skipLevelBtn");
+
+function openOwnerKey(){
+ ownerKeyInput.value="";
+ ownerKeyStatus.textContent="";
+ ownerKeyStatus.className="";
+ ownerKeyModal.classList.add("show");
+ setTimeout(()=>ownerKeyInput.focus(),80);
+}
+function closeOwnerKey(){ownerKeyModal.classList.remove("show")}
+function unlockOwner(){
+ if(ownerKeyInput.value==="6969"){
+   ownerUnlocked=true;
+   ownerKeyStatus.textContent="✓ ACCESS GRANTED";
+   ownerKeyStatus.className="good";
+   setTimeout(()=>{
+     closeOwnerKey();
+     skipClicks=0;
+     start();
+   },350);
+ }else{
+   ownerKeyStatus.textContent="✕ DECLINED — WRONG KEY";
+   ownerKeyStatus.className="bad";
+   ownerKeyInput.value="";
+   ownerKeyInput.focus();
+ }
+}
+document.getElementById("ownerKeyBtn").addEventListener("click",openOwnerKey);
+document.getElementById("ownerKeySubmit").addEventListener("click",unlockOwner);
+document.getElementById("ownerKeyCancel").addEventListener("click",closeOwnerKey);
+ownerKeyInput.addEventListener("keydown",e=>{
+ if(e.key==="Enter")unlockOwner();
+ if(e.key==="Escape")closeOwnerKey();
+});
+ownerKeyModal.addEventListener("pointerdown",e=>{if(e.target===ownerKeyModal)closeOwnerKey()});
+
+function skipOneLevel(){
+ if(!ownerUnlocked||!gameStarted||gameFinished)return;
+ skipClicks++;
+ // 1st click -> Level 2, 2nd -> Level 3, 3rd -> Level 4,
+ // 4th -> Level 5. 5th click -> complete the game.
+ if(skipClicks<=4){
+   currentLevel=skipClicks;
+   loadLevel(currentLevel);
+   playBackgroundMusic();
+ }else{
+   gameFinished=true;
+   levelWon=false;
+   stopAllMusic();
+   playRewardMusic();
+   document.getElementById("winnerScreen").classList.add("show");
+   document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
+ }
+}
+skipLevelBtn.addEventListener("click",skipOneLevel);
+document.getElementById("startGameBtn").onclick=()=>{
+ ownerUnlocked=false;skipClicks=0;document.getElementById("skipLevelBtn").classList.remove("enabled");start();
+};
 document.addEventListener("keydown",e=>{if(!gameStarted&&(e.code==="Enter"||e.code==="Space"))start()});
 
 loadLevel(0);

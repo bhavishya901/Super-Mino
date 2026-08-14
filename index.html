@@ -47,6 +47,13 @@ touch-action:none;user-select:none;box-shadow:inset 0 2px 0 #ffffff24,0 8px 16px
 #jump{border-radius:24%;width:76px;height:76px}
 .btn:active,.btn.pressed{transform:translateY(3px) scale(.97);filter:brightness(1.18)}
 @media(min-width:800px){#touch{display:none}}
+@media(max-width:520px){
+  .start-actions{gap:6px;margin:0}
+  #startGameBtn,#profileBtn,#ownerKeyBtn{min-width:118px!important;padding:7px 10px!important;font-size:11px!important}
+  .menu-leader-wrap{top:10px;right:10px;left:auto}
+  #menuLeaderboardBtn{min-width:110px;padding:6px 9px;font-size:10px}
+  #ownerKeyBtn{top:auto;right:auto;min-width:110px!important;width:100%;padding:6px 9px!important;font-size:10px!important}
+}
 @media(max-width:420px){.btn{width:62px;height:62px;font-size:27px}#jump{width:70px;height:70px}}
 #startMenu{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
 background:linear-gradient(180deg,#48a9ff,#78c8ff 58%,#bcecff);color:#fff;text-align:center;transition:opacity .35s}
@@ -67,7 +74,7 @@ background:linear-gradient(180deg,#48a9ff,#78c8ff 58%,#bcecff);color:#fff;text-a
     0 7px 0 #7b1116,
     0 10px 0 rgba(0,0,0,.16);
   filter:drop-shadow(0 5px 0 rgba(255,255,255,.18));
-  transform:skew(-2deg);
+  transform:translateY(-45px) skew(-2deg);
 }
 .start-logo::after{
   content:"Super Mino";
@@ -79,11 +86,12 @@ background:linear-gradient(180deg,#48a9ff,#78c8ff 58%,#bcecff);color:#fff;text-a
   -webkit-text-stroke:1px rgba(255,255,255,.7);
   pointer-events:none;
 }
-.start-subtitle{position:relative;z-index:2;font:900 clamp(11px,1.8vw,17px) monospace;letter-spacing:1.5px;line-height:1.5;color:#fff;text-shadow:2px 2px #2572b7;margin:10px 0 20px;max-width:min(80vw,620px)}
+.start-subtitle{position:relative;z-index:2;font:900 clamp(11px,1.8vw,17px) monospace;letter-spacing:1.5px;line-height:1.5;color:#fff;text-shadow:2px 2px #2572b7;margin:10px 0 20px;max-width:min(80vw,620px);transform:translateY(-45px)}
 #startGameBtn{position:relative;z-index:2;border:3px solid #fff;border-radius:10px;padding:9px 24px;min-width:150px;color:#fff;
 background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18px #0004;font:900 15px monospace;cursor:pointer;text-shadow:2px 2px #8a4b00}
-.start-actions{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:9px}
+.start-actions{position:absolute;z-index:3;left:50%;top:72%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;margin:0}
 #ownerKeyBtn,#skipLevelBtn{border:3px solid #fff;border-radius:10px;padding:8px 20px;min-width:150px;color:#fff;background:linear-gradient(#6578ff,#3449b8);box-shadow:0 4px 0 #202d78,0 8px 18px #0004;font:900 13px monospace;cursor:pointer;text-shadow:2px 2px #202d78}
+#ownerKeyBtn{position:static;z-index:auto;margin:0;width:100%}
 #ownerKeyBtn:active,#skipLevelBtn:active{transform:translateY(4px);box-shadow:0 0 0 #202d78}
 #skipLevelBtn{position:absolute;right:18px;top:92px;z-index:16;display:none;background:linear-gradient(#ffcf32,#e58d00);box-shadow:0 4px 0 #9a5000;text-shadow:2px 2px #8a4b00}
 #skipLevelBtn.enabled{display:block}
@@ -100,6 +108,42 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 #ownerKeyStatus{min-height:18px;margin-top:10px;font:900 11px monospace}
 #ownerKeyStatus.bad{color:#ff9a9a}
 #ownerKeyStatus.good{color:#9cffaa}
+.menu-leader-wrap{position:absolute;top:16px;right:16px;left:auto;z-index:4;display:flex;flex-direction:column;align-items:stretch;gap:6px}
+#menuLeaderboardBtn,#profileBtn,#ownerKeyBtn{position:relative;z-index:3;border:2px solid #fff;border-radius:9px;padding:7px 14px;min-width:130px;color:#fff;background:linear-gradient(#6578ff,#3449b8);box-shadow:0 3px 0 #202d78;font:900 12px monospace;cursor:pointer;text-shadow:2px 2px #202d78}
+#menuLeaderboardBtn{background:linear-gradient(#ffd83d,#e58d00);box-shadow:0 3px 0 #9a5000;text-shadow:2px 2px #8a5000}
+#menuLeaderboardBtn:active,#profileBtn:active,#ownerKeyBtn:active{transform:translateY(3px);box-shadow:0 0 0 #202d78}
+#startGameBtn{padding:7px 18px!important;min-width:130px!important;font-size:12px!important}
+#loginModal,#leaderboardModal{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.68);padding:18px}
+#loginModal.show,#leaderboardModal.show{display:flex}
+.account-card,.leader-card{width:min(380px,92vw);padding:22px 18px;border:4px solid #fff;border-radius:16px;background:linear-gradient(#347edb,#17488e);box-shadow:0 8px 0 #091d49,0 20px 45px #0009;color:#fff;text-align:center}
+.account-card h2,.leader-card h2{font:900 25px Impact,"Arial Black",sans-serif;color:#ffd83d;text-shadow:3px 3px #351900;margin-bottom:8px}
+#usernameInput{width:min(260px,80vw);padding:10px;border:3px solid #fff;border-radius:9px;text-align:center;font:900 18px monospace;outline:none}
+.account-actions{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.account-actions button{border:3px solid #fff;border-radius:9px;padding:8px 15px;color:#fff;font:900 12px monospace;cursor:pointer}
+#saveUsername{background:#2aaa48;box-shadow:0 4px 0 #176327}
+#refreshLeaderboard{display:none;background:#2aaa48;box-shadow:0 4px 0 #176327}
+#refreshLeaderboard.owner-visible{display:inline-block}
+#refreshLeaderboard:active{transform:translateY(4px);box-shadow:0 0 0 #176327}
+#closeLogin,#closeLeaderboard{background:#c83b3b;box-shadow:0 4px 0 #712020}
+#loginStatus{min-height:18px;margin-top:8px;font:900 11px monospace}
+#leaderboardList{margin:12px 0;text-align:left;max-height:45vh;overflow:auto}
+.lb-row{display:grid;grid-template-columns:34px 1fr 80px;gap:6px;padding:8px 6px;border-bottom:1px solid #ffffff44;font:900 12px monospace}
+.lb-row.me{background:#ffd83d22;border-radius:6px}
+.leader-small{font:700 10px monospace;color:#dfe6ff;margin-bottom:8px}
+.game-leader-btn{position:absolute;left:12px;top:68px;z-index:8;border:2px solid #fff;border-radius:8px;padding:5px 8px;background:#18285dcc;color:#fff;font:900 10px monospace;cursor:pointer;display:none}
+.game-leader-btn.show{display:block}
+.game-main-menu-btn{
+  position:absolute;right:12px;top:68px;z-index:8;
+  border:2px solid #fff;border-radius:8px;padding:5px 8px;
+  background:#18285dcc;color:#fff;font:900 10px monospace;
+  cursor:pointer;display:none;text-shadow:2px 2px #000;
+}
+.game-main-menu-btn.show{display:block}
+.game-main-menu-btn:active{transform:translateY(2px)}
+@media(max-width:520px){
+  .game-leader-btn{left:9px;top:68px;font-size:9px;padding:5px 7px}
+  .game-main-menu-btn{right:9px;top:68px;font-size:9px;padding:5px 7px}
+}
 .start-credit{position:absolute;z-index:3;bottom:12px;left:0;right:0;font:900 12px monospace;letter-spacing:2px;color:#fff;text-shadow:2px 2px #2572b7}
 @media(min-width:800px){#touch{display:none}}
 
@@ -195,9 +239,13 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
   <div class="start-cloud one"></div><div class="start-cloud two"></div>
   <div class="start-logo">Super Mino</div>
   <div class="start-subtitle">WIN THE GAME AND GET A REDEEM CODE🎁</div>
-  <button id="startGameBtn">▶ START GAME</button>
-  <div class="start-actions">
+  <div class="menu-leader-wrap">
+    <button id="menuLeaderboardBtn" type="button">🏆 LEADERBOARD</button>
     <button id="ownerKeyBtn" type="button">🔑 OWNER KEY</button>
+  </div>
+  <div class="start-actions">
+    <button id="startGameBtn">▶ START</button>
+    <button id="profileBtn" type="button">👤 LOGIN</button>
   </div>
   <div class="start-credit">MADE BY BHAVISHYA</div>
 </div>
@@ -212,6 +260,31 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
       <button id="ownerKeyCancel" type="button">CANCEL</button>
     </div>
     <div id="ownerKeyStatus"></div>
+  </div>
+</div>
+
+<div id="loginModal">
+  <div class="account-card">
+    <h2>PLAYER LOGIN</h2>
+    <p class="leader-small">Username only — no password required.</p>
+    <input id="usernameInput" maxlength="16" autocomplete="off" placeholder="ENTER USERNAME">
+    <div class="account-actions">
+      <button id="saveUsername" type="button">SAVE</button>
+      <button id="closeLogin" type="button">CANCEL</button>
+    </div>
+    <div id="loginStatus"></div>
+  </div>
+</div>
+
+<div id="leaderboardModal">
+  <div class="leader-card">
+    <h2>🏆 LEADERBOARD</h2>
+    <div class="leader-small">LOCAL DEMO — ONLINE SERVER CAN BE CONNECTED LATER</div>
+    <div id="leaderboardList"></div>
+    <div class="account-actions">
+      <button id="refreshLeaderboard" type="button">🔄 REFRESH</button>
+      <button id="closeLeaderboard" type="button">BACK</button>
+    </div>
   </div>
 </div>
 
@@ -240,6 +313,8 @@ background:linear-gradient(#ffcf32,#ed8e00);box-shadow:0 4px 0 #9a5000,0 8px 18p
 
 <div id="wrap">
 <canvas id="game"></canvas>
+<button id="gameLeaderboardBtn" class="game-leader-btn" type="button">🏆 LEADERBOARD</button>
+<button id="gameMainMenuBtn" class="game-main-menu-btn" type="button">🏠 MAIN MENU</button>
 <div id="hud">
   <span id="score">SCORE 000000</span><span id="coins">COINS ×00</span><span id="world">WORLD 1-1</span><span id="lives">♥ 3</span>
 </div>
@@ -257,6 +332,7 @@ const canvas=document.getElementById("game"),ctx=canvas.getContext("2d",{alpha:f
 ctx.imageSmoothingEnabled=false;
 const W=960,H=540;
 let cam=0,score=0,coinCount=0,lives=3,currentLevel=0,gameStarted=false,levelWon=false,gameFinished=false,ownerUnlocked=false,skipClicks=0;
+let username=localStorage.getItem("superMinoUsername")||"";
 const keys={left:false,right:false,jump:false},LEVELS=[];
 let p,prevJump=false,enemies=[],coins=[],blocks=[],pipes=[],solids=[],goal={},boss=null,princess=null,deathAnim=false,deathTimer=0,powerReady=false,powerFlash=0,powerCollectedByLevel={2:false,3:false},heartCollectedByLevel={1:false,3:false},hearts=[],heartToastTimer=0,birds=[];
 const bgMusic=document.getElementById("bgMusic");
@@ -668,7 +744,8 @@ function update(){
      stopAllMusic();
      playRewardMusic();
      document.getElementById("winnerScreen").classList.add("show");
-     document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
+     saveLocalScore();
+      document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
    }
  }
  cam+=(p.x-300-cam)*.09;cam=Math.max(0,Math.min(Math.max(0,L.length-W),cam));
@@ -676,7 +753,7 @@ function update(){
 }
 function showHeartShayari(){
  const toast=document.getElementById("heartToast");if(!toast)return;
- toast.innerHTML='❤️ +1 HEART<br><span style="font-size:.72em">"Dil mila, jaan bachi…<br>ab jeet ki baari hai! ❤️"</span>';
+ toast.innerHTML='❤️ +1 HEART</span>';
  toast.classList.remove("show");void toast.offsetWidth;toast.classList.add("show");
  clearTimeout(heartToastTimer);heartToastTimer=setTimeout(()=>toast.classList.remove("show"),2600);
 }
@@ -1037,6 +1114,7 @@ canvas.addEventListener("pointerdown", (e)=>{
 /* Winner -> Menu. Next START GAME is a completely fresh run. */
 document.getElementById("winnerAgain").addEventListener("click",()=>{
   document.getElementById("winnerScreen").classList.remove("show");
+  gameLeaderboardBtn.classList.remove("show");
   stopAllMusic();
   gameStarted=false; gameFinished=false; levelWon=false;
   currentLevel=0; score=0; coinCount=0; lives=3; 
@@ -1054,11 +1132,134 @@ function loop(){
   if(pageVisible){update();draw();}
   requestAnimationFrame(loop)
 }
+
+const loginModal=document.getElementById("loginModal");
+const leaderboardModal=document.getElementById("leaderboardModal");
+const usernameInput=document.getElementById("usernameInput");
+const loginStatus=document.getElementById("loginStatus");
+const leaderboardList=document.getElementById("leaderboardList");
+const gameLeaderboardBtn=document.getElementById("gameLeaderboardBtn");
+const refreshLeaderboard=document.getElementById("refreshLeaderboard");
+
+function cleanName(v){
+ return v.trim().replace(/[^a-zA-Z0-9 _-]/g,"").slice(0,16);
+}
+function openLogin(){
+ usernameInput.value=username;
+ loginStatus.textContent="";
+ loginModal.classList.add("show");
+ setTimeout(()=>usernameInput.focus(),60);
+}
+function closeLogin(){loginModal.classList.remove("show")}
+function saveUsername(){
+ const n=cleanName(usernameInput.value);
+ if(n.length<2){loginStatus.textContent="ENTER AT LEAST 2 CHARACTERS";return}
+ username=n;
+ localStorage.setItem("superMinoUsername",username);
+ loginStatus.textContent="✓ USERNAME SAVED";
+ setTimeout(closeLogin,350);
+}
+function getLocalScores(){
+ try{return JSON.parse(localStorage.getItem("superMinoLeaderboard")||"[]")}catch(_){return[]}
+}
+function saveLocalScore(){
+ if(!username)return;
+ const list=getLocalScores();
+ const i=list.findIndex(x=>x.name===username);
+ if(i>=0)list[i].score=Math.max(list[i].score||0,score);
+ else list.push({name:username,score:score});
+ list.sort((a,b)=>b.score-a.score);
+ localStorage.setItem("superMinoLeaderboard",JSON.stringify(list.slice(0,20)));
+}
+function renderLeaderboard(){
+ const list=getLocalScores();
+ if(!list.length){
+   leaderboardList.innerHTML='<div class="leader-small" style="text-align:center;padding:20px">NO SCORES YET<br>PLAY THE GAME TO SET A RECORD!</div>';
+   return;
+ }
+ leaderboardList.innerHTML=list.map((x,i)=>`<div class="lb-row ${x.name===username?"me":""}">
+   <span>#${i+1}</span><span>${escapeHtml(x.name)}</span><span>${String(x.score).padStart(6,"0")}</span>
+ </div>`).join("");
+}
+function escapeHtml(v){
+ return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function updateLeaderboardRefreshAccess(){
+ const ownerCanRefresh=ownerUnlocked&&gameStarted&&!gameFinished;
+ refreshLeaderboard.classList.toggle("owner-visible",ownerCanRefresh);
+ refreshLeaderboard.disabled=!ownerCanRefresh;
+ refreshLeaderboard.title=ownerCanRefresh?"OWNER ONLY — refresh leaderboard":"OWNER KEY REQUIRED";
+}
+function refreshLeaderboardData(){
+ if(!ownerUnlocked||!gameStarted||gameFinished)return;
+
+ // OWNER RESET: set every saved player's leaderboard score to 0.
+ // Keep the player names/rows, but reset all scores.
+ const list=getLocalScores();
+ const resetList=list.map(x=>({...x,score:0}));
+ localStorage.setItem("superMinoLeaderboard",JSON.stringify(resetList.slice(0,20)));
+
+ // Immediately redraw the leaderboard so every score shows 000000.
+ renderLeaderboard();
+}
+function openLeaderboard(){
+ renderLeaderboard();
+ updateLeaderboardRefreshAccess();
+ leaderboardModal.classList.add("show");
+}
+function closeLeaderboard(){leaderboardModal.classList.remove("show")}
+document.getElementById("profileBtn").addEventListener("click",openLogin);
+document.getElementById("saveUsername").addEventListener("click",saveUsername);
+document.getElementById("closeLogin").addEventListener("click",closeLogin);
+document.getElementById("menuLeaderboardBtn").addEventListener("click",openLeaderboard);
+document.getElementById("closeLeaderboard").addEventListener("click",closeLeaderboard);
+gameLeaderboardBtn.addEventListener("click",openLeaderboard);
+refreshLeaderboard.addEventListener("click",refreshLeaderboardData);
+
+function returnToMainMenu(){
+  stopAllMusic();
+  closeLeaderboard();
+  closeLogin();
+  closeOwnerKey();
+  document.getElementById("winnerScreen").classList.remove("show");
+  gameStarted=false;
+  gameFinished=false;
+  levelWon=false;
+  currentLevel=0;
+  score=0;
+  coinCount=0;
+  lives=3;
+  ownerUnlocked=false;
+  skipClicks=0;
+  powerReady=false;
+  powerFlash=0;
+  powerCollectedByLevel={2:false,3:false};
+  blueShot=null;
+  deathAnim=false;
+  deathTimer=0;
+  document.getElementById("skipLevelBtn").classList.remove("enabled");
+  gameLeaderboardBtn.classList.remove("show");
+  document.getElementById("gameMainMenuBtn").classList.remove("show");
+  loadLevel(0);
+  updateHud();
+  const menu=document.getElementById("startMenu");
+  menu.style.opacity="1";
+  menu.style.pointerEvents="auto";
+}
+document.getElementById("gameMainMenuBtn").addEventListener("click",returnToMainMenu);
+usernameInput.addEventListener("keydown",e=>{if(e.key==="Enter")saveUsername();if(e.key==="Escape")closeLogin();});
+loginModal.addEventListener("pointerdown",e=>{if(e.target===loginModal)closeLogin()});
+leaderboardModal.addEventListener("pointerdown",e=>{if(e.target===leaderboardModal)closeLeaderboard()});
+
+
 function start(){
  gameStarted=true;score=0;coinCount=0;lives=3;heartCollectedByLevel={1:false,3:false};hearts=[];powerReady=false;powerFlash=0;powerCollectedByLevel={2:false,3:false};blueShot=null;
  loadLevel(0);
  const sm=document.getElementById("startMenu");sm.style.opacity=0;sm.style.pointerEvents="none";
  document.getElementById("skipLevelBtn").classList.toggle("enabled",ownerUnlocked);
+ gameLeaderboardBtn.classList.add("show");
+  document.getElementById("gameMainMenuBtn").classList.add("show");
+  updateLeaderboardRefreshAccess();
  playBackgroundMusic();
 }
 
@@ -1084,6 +1285,7 @@ function unlockOwner(){
      closeOwnerKey();
      skipClicks=0;
      start();
+     updateLeaderboardRefreshAccess();
    },350);
  }else{
    ownerKeyStatus.textContent="✕ DECLINED — WRONG KEY";
@@ -1116,7 +1318,8 @@ function skipOneLevel(){
    stopAllMusic();
    playRewardMusic();
    document.getElementById("winnerScreen").classList.add("show");
-   document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
+   saveLocalScore();
+      document.getElementById("winnerScore").textContent="FINAL SCORE "+String(score).padStart(6,"0");
  }
 }
 skipLevelBtn.addEventListener("click",skipOneLevel);
@@ -1136,6 +1339,15 @@ rewardImage.addEventListener("load",()=>{
   rewardPlaceholder.style.display="none";
 });
 
+
+
+const oldWinnerAgain=document.getElementById("winnerAgain");
+if(oldWinnerAgain){
+ oldWinnerAgain.addEventListener("click",()=>{
+   gameLeaderboardBtn.classList.remove("show");
+   closeLeaderboard();
+ });
+}
 </script>
 </body>
 </html>
